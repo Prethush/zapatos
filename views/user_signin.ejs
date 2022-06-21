@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signin</title>
+    <link rel="stylesheet" href="/users/css/user_signin.css" />
+  </head>
+  <body>
+    <div class="card">
+      <div>
+        <h2 class="title">Log in</h2>
+        <p class="subtitle">
+          Don't have an account? <a href="/users/signup"> sign Up</a>
+        </p>
+
+        <p class="or"><span>or</span></p>
+
+        <form class="email-login" action="/users/login" method="post">
+          <span style="display: block; color: red; margin-bottom: 1rem"
+            ><%= error %></span
+          >
+          <label for="email"> <b>Email</b></label>
+          <input type="email" placeholder="Enter Email" name="email" />
+          <span style="display: block; color: red; margin-bottom: 1rem"
+            ><%= emailError %></span
+          >
+          <label for="passwd"><b>Password</b></label>
+          <input type="password" placeholder="Enter Password" name="passwd" />
+          <span style="display: block; color: red; margin-bottom: 1rem"
+            ><%= passwdError %></span
+          >
+          <input class="cta-btn" type="submit" value="Login" />
+        </form>
+        <a class="forget-pass" href="/users/confirmEmail">Forgot password?</a>
+      </div>
+    </div>
+  </body>
+</html>

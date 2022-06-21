@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags-->
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="Colorlib Templates" />
+    <meta name="author" content="Colorlib" />
+    <meta name="keywords" content="Colorlib Templates" />
+
+    <!-- Title Page-->
+    <title>All Orders</title>
+
+    <!-- Icons font CSS-->
+    <link
+      href="/admin/assets/node_modules2/morrisjs/morris.css"
+      rel="stylesheet"
+    />
+    <link href="/admin/dist/css/pages/ecommerce.css" rel="stylesheet" />
+    <!-- Custom CSS -->
+    <link href="/admin/dist/css/style.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css"
+    />
+  </head>
+  <body>
+    <div class="preloader">
+      <div class="loader">
+        <div class="loader__figure"></div>
+        <p class="loader__label">Elite admin</p>
+      </div>
+    </div>
+    <div class="main-wrapper">
+      <%-include('partials/header')%> <%-include('partials/sidebar')%>
+      <div class="container-fluid">
+        <div class="row page-titles">
+          <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Dashboard</h4>
+          </div>
+          <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  <a href="javascript:void(0)">Home</a>
+                </li>
+                <li class="breadcrumb-item active">All Users</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-wrapper">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">All Orders</h5>
+                  <div class="table-responsive m-t-30">
+                    <table class="table" id="tableContent">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Order ID</th>
+                          <th>User Name</th>
+                          <th>Product Image</th>
+                          <th>Product Name</th>
+                          <th>Product Price</th>
+                          <th>Order Price</th>
+                          <th>Size</th>
+                          <th>Quantity</th>
+                          <th>Purchased Date</th>
+                          <th>Payment Mode</th>
+                          <th>Order Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% if(data.length){%> <% data.forEach((d,i) => {%>
+                        <tr>
+                          <td><%= i + 1 %></td>
+                          <td><%= d.orderId%></td>
+                          <td><%= d.user %></td>
+                          <td>
+                            <img
+                              src="/admin/products/<%= d.image%>"
+                              style="
+                                width: 4rem;
+                                height: 4rem;
+                                object-fit: cover;
+                              "
+                            />
+                          </td>
+
+                          <td><%= d.prodName %></td>
+                          <td>&#8377; <%= d.price.toLocaleString() %></td>
+                            <td>&#8377; <%= d.totalPrice.toLocaleString() %></td>
+                          <td><%= d.size %></td>
+                          <td><%= d.quantity%></td>
+                          <td><%= d.purchasedDate%></td>
+                          <td><%= d.paymentMethod%></td>
+                          <td>
+                            <% if(d.orderStatus === "processing"){%>
+                            <select
+                              name="orderStatus"
+                              class="orderStatus"
+                              onmouseup="changeOrderStatus('<%= d.orderId%>', '<%= d.objectId%>','<%=i%>')"
+                            >
+                              <option value="processing">processing</option>
+                              <option value="shipped">Shipped</option>
+                              <option value="delivered">Deleivered</option>
+                            </select>
+                            <%}else if(d.orderStatus === "shipped"){%>
+                            <select
+                              name="orderStatus"
+                              class="orderStatus"
+                              onmouseup="changeOrderStatus('<%= d.orderId%>', '<%= d.objectId%>','<%=i%>')"
+                            >
+                              <option value="shipped">Shipped</option>
+                              <option value="delivered">Deleivered</option>
+                            </select>
+                            <%}else if(d.orderStatus === "cancelled"){%>
+                              <select
+                              name="orderStatus"
+                              class="orderStatus"
+                            >
+                              <option value="shipped">Cancelled</option>
+                            </select>
+                            <%}else if(d.orderStatus === "delivered"){%> 
+                              <select
+                              name="orderStatus"
+                              class="orderStatus"
+                            >
+                              <option value="delivered">Deleivered</option>
+                            </select
+                               <% }else{%>
+                                  <select
+                              name="orderStatus"
+                              class="orderStatus"
+                            >
+                              <option value="failed">Payment failed</option>
+                            </select
+                              <%}%>
+                          </td>
+                        </tr>
+                        <%})%> <%}%>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+    </div>
+    <script src="/admin/assets/node_modules2/jquery/jquery-3.2.1.min.js"></script>
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"
+    ></script>
+    <script>
+         $(document).ready(function () {
+        $("#tableContent").DataTable();
+      });
+      function changeOrderStatus(orderId, objectId, index) {
+        console.log(index, "index");
+        let orderStatus = document.getElementsByClassName("orderStatus");
+        orderStatus = orderStatus[index].value;
+        console.log(orderStatus[index]);
+        $.ajax({
+          url: "/admin/changeOrderStatus/" + orderId,
+          data: {
+            status: orderStatus,
+            objectId,
+          },
+          method: "post",
+          success: (response) => {
+            console.log(response);
+          },
+        });
+      }
+    </script>
+    
+    <script src="/admin/assets/node_modules2/popper/popper.min.js"></script>
+    <script src="/admin/assets/node_modules2/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/admin/dist/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/admin/dist/js/waves.js"></script>
+    <script src="/admin/dist/js/sidebarmenu.js"></script>
+    <script src="/admin/assets/node_modules2/sticky-kit-master/dist/sticky-kit.min.js"></script>
+    <script src="/admin/assets/node_modules2/sparkline/jquery.sparkline.min.js"></script>
+    <script src="/admin/dist/js/custom.min.js"></script>
+    <script src="/admin/assets/node_modules2/jquery-sparkline/jquery.sparkline.min.js"></script>
+    <script src="/admin/assets/node_modules2/raphael/raphael-min.js"></script>
+    <script src="/admin/assets/node_modules2/morrisjs/morris.min.js"></script>
+    <script src="/admin/dist/js/ecom-dashboard.js"></script>
+  </body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Checkout</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" type="image/png" href="/users/images/icons/favicon.png" />
+    <%- include('layout/layout')%>
+    <link
+      rel="canonical"
+      href="https://getbootstrap.com/docs/5.2/examples/checkout/"
+    />
+    <link
+      href="/docs/5.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/users/css/checkout.css" />
+  </head>
+  <body class="animsition">
+    <!-- Header -->
+
+    <%- include('partials/header.ejs') %>
+    <div class="container">
+      <main>
+        <div class="row" style="margin: 2rem 0 3rem 0">
+          <% address.forEach((a,i) => {%>
+            <div class="" style="border: 1px solid rgb(235, 230, 230); border-radius: .3rem;width: 18rem; margin-right: 3rem; margin-bottom: 1rem;">
+            <div class="p-4">
+            <h3 style="font-weight: 600; padding: 1rem 0;">Address <%= i+1 %></h3>
+              <h6 style="padding-bottom: 1rem;">Address: <%= a.address %></h6>
+              <h6 style="padding-bottom: 1rem;">City: <%= a.city %></h6>
+              <h6 style="padding-bottom: 1rem;">State: <%= a.state %></h6>
+              <h6 style="padding-bottom: 1rem;">Mobile No: <%= a.phone %></h6>
+              <h6 style="padding-bottom: 1rem;">Pincode: <%= a.pincode %></h6>
+              <div>
+               <% if(a.isDefault) {%>
+                   <button class="addTxt" style="background-color: blue; width: 100%; color: #fff; padding: .3rem 0; border-radius: .4rem; font-weight: 600;" onclick="selectShippingAddress('<%= a.id %>', '<%= i %>')" >Selected</button>
+               <%}else{%>
+                 <button class="addTxt" style="background-color: blue; width: 100%; color: #fff; padding: .3rem 0; border-radius: .4rem; font-weight: 600;" onclick="selectShippingAddress('<%= a.id %>', '<%= i %>')" >Deliver to this Address</button>
+               <%}%>
+              </div>
+            </div>
+         
+          </div>
+           <%})%>
+        </div>
+        <div class="row g-5">
+          <div class="col-md-5 col-lg-4 order-md-last">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-primary">Your cart</span>
+              <span class="badge bg-primary rounded-pill"><%= cart.length %></span>
+            </h4>
+            <ul class="list-group mb-3">
+             <% cart.forEach((c,i) => {%>
+                 <li class="list-group-item d-flex justify-content-between lh-sm">
+                <div>
+                  <h6 class="my-0"><%= c.variant.name %></h6>
+                  <small class="text-muted">Quantity: <%= c.quantity%></small>
+                </div>
+                 <span class="text-muted">Size: <%=c.size%> </span>
+                <span class="text-muted">&#8377; <%= c.price.toLocaleString()%></span>
+              </li>
+             <%})%>
+              <!-- <li
+                class="list-group-item d-flex justify-content-between bg-light"
+              >
+                <div class="text-success">
+                  <h6 class="my-0">Promo code</h6>
+                  <small>EXAMPLECODE</small>
+                </div>
+                <span class="text-success">−$5</span>
+              </li> -->
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Total</span>
+                <strong>&#8377; <%= totalAmount.toLocaleString()%></strong>
+              </li>
+                 </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Tax</span>
+                <strong>&#8377; <%= tax.toLocaleString() %></strong>
+              </li>
+                 </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Grand Total</span>
+                <strong>&#8377; <%= grandTotal.toLocaleString() %></strong>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="col-md-7 col-lg-8">
+            <h4 class="mb-3" style="font-weight: 700">Billing address</h4>
+            <form class="needs-validation" style="margin: 3rem 0" id="form" action="/users/checkout/newBillingAddress/<%= id %>" method="post">
+              <span
+                style="display: block; color: red; margin-bottom: 0.5rem"
+                ><%= error %></span
+              >
+              <div class="row g-3">
+                <div class="col-sm-6 mb-4">
+                  <label for="city" class="form-label">City</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="city"
+                    placeholder="City"
+                    value=""
+                    name="city"
+                    style="background-color: rgb(246, 242, 242)"
+                  />
+                  <div class="d-none err">City name is required</div>
+                </div>
+
+                <div class="col-sm-6 mb-4">
+                  <label for="state" class="form-label">State</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="state"
+                    placeholder="State"
+                    value=""
+                    name="state"
+                    style="background-color: rgb(246, 242, 242)"
+                  />
+                  <div class="d-none err">State name is required</div>
+                </div>
+
+                <div class="col-12 mb-4">
+                  <label for="address" class="form-label">Address</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="address"
+                    placeholder="Address"
+                    name="address"
+                    style="background-color: rgb(246, 242, 242)"
+                  />
+                  <div class="d-none err">Address is required</div>
+                </div>
+
+                <div class="col-12 mb-4">
+                  <label for="pincode" class="form-label">Pincode</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="pincode"
+                    placeholder="pincode"
+                    name="pincode"
+                    style="background-color: rgb(246, 242, 242)"
+                  />
+                  <div class="d-none err">Pincode is required.</div>
+                </div>
+
+                <div class="col-12">
+                  <label for="phone" class="form-label">Mobile Number</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="phone"
+                    placeholder="Mobile No"
+                    style="background-color: rgb(246, 242, 242)"
+                    name="phone"
+                  />
+                  <div class="d-none err">Mobile Number is required</div>
+                </div>
+              <button
+                class="w-100 btn btn-primary btn-lg"
+                type="submit"
+                style="margin-top: 2rem"
+              >
+                Add New Billing Address
+              </button>
+            </form>
+           
+          </div>
+           <div class="my-4 text-center">
+             <span id="checkoutTxt" style="display: block; color: red; font-weight: 700; margin: .5rem 0;"></span>
+              <button onclick="paymentPageRequest()" class="btn btn-lg" style="background-color: rgb(145, 145, 236); color: #fff">Continue to Checkout</button>
+            </div>
+        </div>
+      </main>
+    </div>
+    <!-- Footer -->
+    <%- include('partials/footer.ejs') %>
+
+    <!-- Back to top -->
+    <div class="btn-back-to-top bg0-hov" id="myBtn">
+      <span class="symbol-btn-back-to-top">
+        <i class="fa fa-angle-double-up" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <!-- Container Selection1 -->
+    <div id="dropDownSelect1"></div>
+
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/jquery/jquery-3.2.1.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/animsition/js/animsition.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/bootstrap/js/popper.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/users/vendor/bootstrap/js/bootstrap.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/select2/select2.min.js"
+    ></script>
+    <script type="text/javascript">
+      $(".selection-1").select2({
+        minimumResultsForSearch: 20,
+        dropdownParent: $("#dropDownSelect1"),
+      });
+    </script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/slick/slick.min.js"
+    ></script>
+    <script type="text/javascript" src="/users/js/slick-custom.js"></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/countdowntime/countdowntime.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/lightbox2/js/lightbox.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/sweetalert/sweetalert.min.js"
+    ></script>
+    <script type="text/javascript">
+      $(".block2-btn-addcart").each(function () {
+        var nameProduct = $(this)
+          .parent()
+          .parent()
+          .parent()
+          .find(".block2-name")
+          .html();
+        $(this).on("click", function () {
+          swal(nameProduct, "is added to cart !", "success");
+        });
+      });
+
+      $(".block2-btn-addwishlist").each(function () {
+        var nameProduct = $(this)
+          .parent()
+          .parent()
+          .parent()
+          .find(".block2-name")
+          .html();
+        $(this).on("click", function () {
+          swal(nameProduct, "is added to wishlist !", "success");
+        });
+      });
+    </script>
+    <script>
+      function selectShippingAddress(addId, index) {
+        let addTxtArr = document.querySelectorAll(".addTxt");
+        $.ajax({
+          url: `/users/checkout/selectAddress/${addId}`,
+          method: "get",
+          success: (response) => {
+            const {msg} = response;
+           if(msg === "selected"){
+            addTxtArr.forEach((a,i) => {
+              if(index !== i){
+              a.innerHTML = "Deliver to this Address";
+              }
+            })
+            addTxtArr[index].innerHTML = msg;
+           }else{
+             addTxtArr.forEach((a,i) => {
+               a.innerHTML = msg
+             })
+           }
+          }
+        }) 
+      }
+
+      function paymentPageRequest(){
+        let checkoutTxt = document.getElementById("checkoutTxt");
+        $.ajax({
+          url: `/users/payment-page/request`,
+          method: "get",
+          success: (response) => {
+            let {status, msg} = response;
+            if(status){
+              window.location.href="/users/payment-page";
+            }else{
+              checkoutTxt.innerHTML = msg;
+            }
+          }
+        })
+      }
+    </script>
+    <!--===============================================================================================-->
+    <script src="/users/js/main.js"></script>
+    <script
+      src="/docs/5.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/users/js/checkout-validation.js"></script>
+  </body>
+</html>

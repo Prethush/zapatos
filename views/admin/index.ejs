@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <!-- Favicon icon --> 
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/admin/assets/images/favicon.png"
+    />
+    <title>
+     Admin Dashboard
+    </title>
+    <!-- chartist CSS -->
+    <link
+      href="/admin/assets/node_modules2/morrisjs/morris.css"
+      rel="stylesheet"
+    />
+    <link href="/admin/dist/css/pages/ecommerce.css" rel="stylesheet" />
+    <!-- Custom CSS -->
+    <link href="/admin/dist/css/style.min.css" rel="stylesheet" />
+  </head>
+
+  <body class="skin-default fixed-layout">
+    <div class="preloader">
+      <div class="loader">
+        <div class="loader__figure"></div>
+        <p class="loader__label">Elite admin</p>
+      </div>
+    </div>
+    <div id="main-wrapper">
+      <%-include('partials/header')%>
+      <%-include('partials/sidebar')%>
+      <div class="page-wrapper">
+        <div class="container-fluid">
+          <div
+            class="row page-titles justify-content-between align-items-center"
+          >
+            <div class="align-self-center">
+              <h4 class="text-themecolor">Dashboard</h4>
+            </div>
+            <!-- Date -->
+            <form action="/admin/home" method="get" id="form">
+              <div class="row">
+                <div>
+                  <label for="startDate" style="margin-right: 0.5rem"
+                    >From Date:</label
+                  >
+                  <input type="date" id="startDate" name="startDate" value="<%= startDate %>"/>
+                </div>
+                <div style="margin-left: 1rem">
+                  <label for="endDate" style="margin-right: 0.5rem"
+                    >To Date:</label
+                  >
+                  <input type="date" id="endDate" name="endDate" value="<%= endDate%>"/>
+                </div>
+                <div style="margin-left: 1rem">
+                  <input type="submit" value="Submit" />
+                </div>
+              </div>
+            </form>
+            <div class="align-self-center text-right">
+              <div class="d-flex justify-content-end align-items-center">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="javascript:void(0)">Home</a>
+                  </li>
+                  <li class="breadcrumb-item active">Dashboard</li>
+                </ol>
+                <a
+                  href="/admin/addProduct"
+                  class="btn btn-info d-none d-lg-block m-l-15"
+                >
+                  <i class="fa fa-plus-circle"></i> Create New
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <!-- Column -->
+            <div class="col-lg-3 col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">ORDER RECEIVED</h4>
+                  <div class="text-right">
+                    <span class="text-muted"><%= text%></span>
+                    <h1 class="font-light">
+                      <sup><i class="text-success"></i></sup> <%= ordersCount%>
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-lg-3 col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">ORDER CANCELLED</h4>
+                  <div class="text-right">
+                    <span class="text-muted"><%= text %></span>
+                    <h1 class="font-light">
+                      <sup><i class="text-primary"></i></sup> <%= cancelledCount ? cancelledCount : 0 %>
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-lg-3 col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">REVENUE STATS</h4>
+                  <div class="text-right">
+                    <span class="text-muted"><%= text %></span>
+                    <h1 class="font-light">
+                      <sup><i class="text-info"></i></sup>₹ <%= totalRevenue%>
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Column -->
+            <!-- Column -->
+            <div class="col-lg-3 col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">SALES STATS</h4>
+                  <div class="text-right">
+                    <span class="text-muted"><%= text %></span>
+                    <h1 class="font-light">
+                      <sup><i class="text-inverse"></i></sup>
+                      ₹ <%= totalSales %>
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Column -->
+          </div>
+          <div class="row">
+            <!-- Column -->
+            <div class="col-lg-8 col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title text-uppercase">Product sales chart (product wise sales)</h5>
+                  <div class="container">
+                    <canvas id="prodChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Column -->
+            <div class="col-lg-4 col-md-12">
+              <div class="row">
+                <!-- Column -->
+                <div class="col-md-12">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">ORDER STATS</h5>
+                      <div id="morris-donut-chart" class="ecomm-donute"></div>
+                      <ul class="list-inline m-t-30 text-center">
+                        <li class="p-r-20">
+                          <h5 class="text-muted">
+                            <i class="fa fa-circle" style="color: #fb9678"></i>
+                            Order
+                          </h5>
+                          <h4 class="m-b-0" id="orderCount"><%= ordersCount ? ordersCount : 0 %></h4>
+                        </li>
+                        <li class="p-r-20">
+                          <h5 class="text-muted">
+                            <i class="fa fa-circle" style="color: #01c0c8"></i>
+                            Processing
+                          </h5>
+                          <h4 class="m-b-0" id="processingCount"><%= processingCount ? processingCount : 0 %></h4>
+                        </li>
+                          <li>
+                          <h5 class="text-muted">
+                            <i class="fa fa-circle" style="color: #4f5467"></i>
+                            Shipped
+                          </h5>
+                          <h4 class="m-b-0" id="shippedCount"><%= shippedCount ? shippedCount : 0%>  </h4>
+                        </li>
+                        <li>
+                          <h5 class="text-muted">
+                            <i class="fa fa-circle" style="color: #4f5467"></i>
+                            Delivered
+                          </h5>
+                          <h4 class="m-b-0" id="deliveredCount"><%= deliveredCount ? deliveredCount : 0%>  </h4>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <!-- Column -->
+                <!-- Column -->
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Sales Overview</h5>
+                  <div class="container-fluid">
+                    <canvas id="myChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%-include('partials/footer')%>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js" integrity="sha512-sW/w8s4RWTdFFSduOTGtk4isV1+190E/GghVffMA9XczdJ2MDzSzLEubKAs5h0wzgSJOQTRYyaz73L3d6RtJSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+      let text = <%- JSON.stringify(text)%>;
+
+      let dateArray = <%- JSON.stringify(dateArray) %>;
+      let totalArray = <%- JSON.stringify(totalArray) %>;
+      console.log(dateArray,totalArray)
+      let myChart = document.getElementById("myChart").getContext("2d");
+      let prodChart = new Chart(myChart, {
+        type: "bar",
+        data: {
+          labels: [...dateArray],
+          datasets: [{
+            label: "Sales/Day",
+            data: [
+              ...totalArray
+            ],
+            backgroundColor: "#3895d3"
+          }]
+        },
+        options: {}
+      })
+
+       let prodNameArray = <%- JSON.stringify(prodNameArr) %>;
+      let salesCountArray = <%- JSON.stringify(salesCountArr) %>;
+      console.log(dateArray,totalArray)
+      let myChart2 = document.getElementById("prodChart").getContext("2d");
+      let prodChart2 = new Chart(myChart2, {
+        type: "bar",
+        data: {
+          labels: [...prodNameArray],
+          datasets: [{
+            label: "Total Sales Count / Product "+"(" + text + ")",
+            data: [
+              ...salesCountArray
+            ],
+            backgroundColor: "#e6292c"
+          }]
+        },
+        options: {}
+      })
+    </script>
+    <script src="/admin/assets/node_modules2/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/admin/assets/node_modules2/popper/popper.min.js"></script>
+    <script src="/admin/assets/node_modules2/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/admin/dist/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/admin/dist/js/waves.js"></script>
+    <script src="/admin/dist/js/sidebarmenu.js"></script>
+    <script src="/admin/assets/node_modules2/sticky-kit-master/dist/sticky-kit.min.js"></script>
+    <script src="/admin/assets/node_modules2/sparkline/jquery.sparkline.min.js"></script>
+    <script src="/admin/dist/js/custom.min.js"></script>
+    <script src="/admin/assets/node_modules2/jquery-sparkline/jquery.sparkline.min.js"></script>
+    <script src="/admin/assets/node_modules2/raphael/raphael-min.js"></script>
+    <script src="/admin/assets/node_modules2/morrisjs/morris.min.js"></script>
+   
+    </script>
+    <script src="/admin/dist/js/ecom-dashboard.js"></script>
+  </body>
+</html>

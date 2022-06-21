@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Payment Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="/users/images/icons/favicon.png" />
+    <%- include('layout/layout') %>
+     <link rel="stylesheet" type="text/css" href="/users/css/modal.css" />
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+     <link rel="stylesheet" href="/users/css/accordion.css">
+  </head>
+  <body class="animsition">
+    <!-- Header -->
+    <%- include('partials/header.ejs') %>
+    <div class="container" style="margin: 3rem auto;">
+      <button class="accordion">Shipping Address</button>
+      <div class="accordion-content" style="margin-bottom: 3rem">
+         <div class="p-4">
+              <h6 style="padding-bottom: 1rem;">Address: <%= address.address %></h6>
+              <h6 style="padding-bottom: 1rem;">City: <%= address.city %></h6>
+              <h6 style="padding-bottom: 1rem;">State: <%= address.state %></h6>
+              <h6 style="padding-bottom: 1rem;">Mobile No: <%= address.phone %></h6>
+              <h6 style="padding-bottom: 1rem;">Pincode: <%= address.pincode %></h6>
+              <div>
+                <a href="/users/checkout/<%= id %>" style="background-color: #03c04a;color: #fff; padding: .3rem .5rem; border-radius: .3rem;">Change Address</a>
+              </div>
+         </div>
+      </div>
+      <div class="row" style="padding: 0 .3rem">
+        <div class="col-md-5 col-lg-6 order-md-last">
+          <div class="modale" id="modal" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-header">
+                   <a href="#" class="btn-close closemodale" id="close-modal" aria-hidden="true">&times;</a>
+              </div>
+              
+              <div class="modal-body">
+                 <h5 id="modal-text" style="color: red;"></h5>
+              </div>
+                 
+            </div>
+            </div>
+            <div>
+            
+            </div>
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-primary">Your Order List</span>
+              <span class="badge bg-primary rounded-pill"><%= cart.length %></span>
+            </h4>
+            <ul class="list-group mb-3">
+             <% cart.forEach((c,i) => {%>
+                 <li class="list-group-item d-flex justify-content-between lh-sm">
+                <div>
+                  <h6 class="my-0"><%= c.variant.name %></h6>
+                  <small class="text-muted">Quantity: <%= c.quantity%></small>
+                </div>
+                 <span class="text-muted">Size: <%=c.size%> </span>
+                <span class="text-muted">&#8377; <%= c.price.toLocaleString()%></span>
+              </li>
+             <%})%>
+              <!-- <li
+                class="list-group-item d-flex justify-content-between bg-light"
+              >
+                <div class="text-success">
+                  <h6 class="my-0">Promo code</h6>
+                  <small>EXAMPLECODE</small>
+                </div>
+                <span class="text-success">−$5</span>
+              </li> -->
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Total</span>
+                <strong>&#8377; <%= totalAmount.toLocaleString()%></strong>
+              </li>
+                 </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Tax</span>
+                <strong>&#8377; <%= tax.toLocaleString() %></strong>
+              </li>
+                 </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Grand Total</span>
+                <strong>&#8377; <%= grandTotal.toLocaleString() %></strong>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-5 col-lg-6 order-md-last p-0" style="border: 1px solid rgb(230, 223, 223)">
+            <h3 style="background-color: rgb(107, 107, 245); color: #fff; font-weight: 600; font-size: 1.2rem;padding: .5rem;">Payment Options</h3>
+              <div class="d-flex flex-column p-4">
+                <div class="p-2">
+                  <input type="radio"  name="payment" value="razorpay" id="razorpay" class="payment" style="cursor: pointer;">
+                <label for="razorpay" style="margin-left: .5rem;"> Razorpay</label></div>
+                <div class="p-2"></div>
+                  <div class="p-2"> 
+                    <input type="radio" name="payment" value="cod" id="cod" class="payment" style="cursor: pointer;">
+                      <label for="cod" style="margin-left: .5rem;"> Cash On Delivery</label>
+                    </div>
+                  </div>
+                  <div class="px-4">
+                     <div class="text-center my-3">
+                       <span id="orderTxt" style="color: red; font-weight: 700;"></span>
+                     </div>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block" onclick="placeOrder('<%= id %>')">Place Order</button>
+                  </div>
+
+          </div>
+      </div>
+    </div>
+    <!-- Footer -->
+    <%- include('partials/footer.ejs') %>
+
+    <!-- Back to top -->
+    <div class="btn-back-to-top bg0-hov" id="myBtn">
+      <span class="symbol-btn-back-to-top">
+        <i class="fa fa-angle-double-up" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <!-- Container Selection1 -->
+    <div id="dropDownSelect1"></div>
+
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/jquery/jquery-3.2.1.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/animsition/js/animsition.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/bootstrap/js/popper.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/users/vendor/bootstrap/js/bootstrap.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/select2/select2.min.js"
+    ></script>
+    <script type="text/javascript">
+      $(".selection-1").select2({
+        minimumResultsForSearch: 20,
+        dropdownParent: $("#dropDownSelect1"),
+      });
+    </script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/slick/slick.min.js"
+    ></script>
+    <script type="text/javascript" src="/users/js/slick-custom.js"></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/countdowntime/countdowntime.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/lightbox2/js/lightbox.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/sweetalert/sweetalert.min.js"
+    ></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="/users/js/accordion.js"></script>
+    <script>
+      function placeOrder() {
+        let orderTxt = document.getElementById("orderTxt");
+        let cartText = document.getElementById("cartText");
+        let allPayments = document.querySelectorAll(".payment");
+         let paymentMode = null;
+        for(i = 0; i < allPayments.length; i++){
+          if(allPayments[i].checked){
+            paymentMode = allPayments[i].id;
+          }
+        }
+        $.ajax({
+          url: `/users/placeOrder/`,
+          data: {
+            paymentMode
+          },
+          method: "post",
+          success: (response) =>{
+            const {status, msg, order, mode, grandTotal} = response;
+            if(!status){
+              orderTxt.style.color = "red";
+              orderTxt.innerHTML = msg;
+              
+            }else if(status && mode==="razorpay"){
+                orderTxt.innerHTML = "";
+                console.log(grandTotal, "total")
+              orderFn(order, grandTotal)
+            }else{
+               orderTxt.innerHTML = "";
+                cartText.innerHTML = 0;
+               window.location.href=`/users/payment-success/${order._id}`
+            }
+          }
+        })
+      }
+
+      function orderFn(order, grandTotal){
+        console.log("total", grandTotal)
+        var options = {
+        "key": "rzp_test_IDAEbrBuEjHaU4", 
+        "amount":grandTotal, 
+        "currency": "INR",
+        "name": "Zapatos",
+        "description": "Test Transaction",
+        "image": "https://example.com/your_logo",
+        "order_id": order.id, 
+        "handler": function (response){
+            verifyPayment(response, order);
+        },
+
+        "prefill": {
+            "name": "<%=name%>",
+            "email": "<%=email%>",
+            "contact": "9999999999"
+        },
+      "notes": {
+          "address": "Razorpay Corporate Office"
+      },
+      "theme": {
+          "color": "#3399cc"
+      }
+      
+  };
+  let rzpl = new Razorpay(options);
+  rzpl.open();
+  rzpl.on("payment.failed",function(response) {
+    let modal = document.getElementById("modal");
+    modal.classList.add("opened");
+    let modalText = document.getElementById("modal-text");
+    modalText.innerHTML = response.error.description;
+    let closeModal = document.getElementById("close-modal");
+    closeModal.addEventListener("click", () => {
+      modal .classList.remove("opened")
+    })
+    paymentFailure(order);
+  }); 
+ 
+}
+
+function paymentFailure(order){
+  $.ajax({
+    url: `/users/payment-failure/${order.receipt}`,
+    method: "get",
+    success: (response) => {
+      console.log(response)
+    }
+  })
+}
+  function verifyPayment(payment,order){
+   let cartText = document.getElementById("cartText");
+    let orderTxt = document.getElementById("orderTxt");
+    $.ajax({
+      url: `/users/checkout/verifyPayment`,
+      data: {
+        payment,
+        order
+      },
+      method: "post",
+      success: (response) => {
+        if(response.status){
+           cartText.innerHTML = 0;
+          window.location.href="/users/payment-success/" + response.orderId
+        }else{
+          orderTxt.innerHTML = response.msg;
+          orderTxt.color = "red";
+        }
+      }
+    })
+  }
+    </script>
+    <!--===============================================================================================-->
+    <script src="/users/js/main.js"></script>
+  </body>
+</html>

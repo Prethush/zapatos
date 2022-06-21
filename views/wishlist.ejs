@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Wishlist</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="/users/images/icons/favicon.png" />
+    <%- include('layout/layout') %>
+  </head>
+  <body class="animsition">
+    <!-- Header -->
+
+    <%- include('partials/header.ejs') %>
+
+    <!-- Wish List -->
+    <div class="container" style="margin: 5rem auto">
+      <div class="card-section" style="min-height: 60vh">
+        <div class="inner">
+          <div class="container">
+            <div class="row" id="row">
+              <% if(wishListCount){%> <% wishList.forEach((w,i) => {%>
+              <div class="col-sm-4">
+                <div class="card" style="margin-bottom: 1rem">
+                  <div>
+                    <a href="/product/<%=w.variant.slug%>">
+                      <img
+                        src="/admin/products/<%= w.variant.images[0].img%>"
+                        alt="<%=w.variant.name%>"
+                        style="width: 100%"
+                      />
+                    </a>
+                  </div>
+                  <div>
+                    <h3
+                      style="font-size: 1rem; color: #fff; text-align: center"
+                    >
+                      <a href="/product/<%=w.variant.slug%>"
+                        ><%= w.variant.name%></a
+                      >
+                    </h3>
+                  </div>
+                  <div class="text-center my-3">
+                    <span
+                      style="
+                        background-color: #d10000;
+                        padding: 0.5rem;
+                        color: #fff;
+                        border-radius: 0.3rem;
+                        cursor: pointer;
+                      "
+                      onclick="deleteProduct('<%= w.variant.slug %>')"
+                    >
+                      Remove from Wishlist
+                    </span>
+                  </div>
+                </div>
+                <!-- card -->
+              </div>
+              <%})%> <%}else{%>
+              <!-- <div style="text-align: center; width: 100%">
+                <h4 id="emptTxt">Wishlist is empty</h4>
+              </div> -->
+              <% }%>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <%- include('partials/footer.ejs') %>
+
+    <!-- Back to top -->
+    <div class="btn-back-to-top bg0-hov" id="myBtn">
+      <span class="symbol-btn-back-to-top">
+        <i class="fa fa-angle-double-up" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <!-- Container Selection1 -->
+    <div id="dropDownSelect1"></div>
+
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/jquery/jquery-3.2.1.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/animsition/js/animsition.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/bootstrap/js/popper.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/users/vendor/bootstrap/js/bootstrap.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/select2/select2.min.js"
+    ></script>
+    <script type="text/javascript">
+      $(".selection-1").select2({
+        minimumResultsForSearch: 20,
+        dropdownParent: $("#dropDownSelect1"),
+      });
+    </script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/slick/slick.min.js"
+    ></script>
+    <script type="text/javascript" src="/users/js/slick-custom.js"></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/countdowntime/countdowntime.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/lightbox2/js/lightbox.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/sweetalert/sweetalert.min.js"
+    ></script>
+
+    <script>
+      function deleteProduct(slug) {
+        let row = document.getElementById("row");
+        let wishListTxt = document.getElementById("wishListTxt");
+        let emptTxt = document.getElementById("emptTxt");
+        wishListTxt.innerText = Number(wishListTxt.innerText) - 1;
+        row.innerHTML = "";
+        $.ajax({
+          url: `/users/wishList/delete/${slug}`,
+          method: "get",
+          success: (response) => {
+            console.log(response);
+            const { products } = response;
+
+            products.forEach((p, i) => {
+              let parentDiv = document.createElement("div");
+              parentDiv.setAttribute("class", "col-sm-4");
+              let subDivOne = document.createElement("div");
+              subDivOne.setAttribute("class", "card");
+              subDivOne.style.marginBottom = "1rem";
+              let subDivTwo = document.createElement("div");
+              let linkOne = document.createElement("a");
+              linkOne.href = `/product/${p.variant.slug}`;
+              let img = document.createElement("img");
+              img.src = `/admin/products/${p.variant.images[0].img}`;
+              img.alt = `${p.variant.name}`;
+              img.style.width = "100%";
+              linkOne.append(img);
+              subDivTwo.append(linkOne);
+              let subDivThree = document.createElement("div");
+              let prodText = document.createElement("h3");
+              prodText.style.fontSize = "1rem";
+              prodText.style.color = "#fff";
+              prodText.style.textAlign = "center";
+              prodText.innerText = `${p.variant.name}`;
+              let linkTwo = document.createElement("a");
+              linkTwo.href = `/product/${p.variant.slug}`;
+              prodText.append(linkTwo);
+              subDivThree.append(prodText);
+              let subDivFour = document.createElement("div");
+              subDivFour.setAttribute("class", "text-center my-3");
+              let btn = document.createElement("button");
+              btn.style.backgroundColor = "#d10000";
+              btn.style.color = "#fff";
+              btn.style.padding = ".5rem";
+              btn.style.borderRadius = ".3rem";
+              btn.style.cursor = "pointer";
+              btn.innerText = "Remove fom Wishlist";
+              btn.addEventListener("click", () => {
+                deleteProduct(p.variant.slug);
+              });
+              subDivFour.append(btn);
+              subDivOne.append(subDivTwo, subDivThree, subDivFour);
+              parentDiv.append(subDivOne);
+              row.append(parentDiv);
+            });
+          },
+        });
+      }
+    </script>
+
+    <!--===============================================================================================-->
+    <script src="/users/js/main.js"></script>
+  </body>
+</html>

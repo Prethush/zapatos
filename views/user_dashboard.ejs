@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>User Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="/users/images/icons/favicon.png" />
+    <%- include('layout/layout')%>  
+  </head>
+  <body class="animsition">
+    <!-- Header -->
+
+    <%- include('partials/header.ejs') %>
+
+    <!-- Dashboard -->
+    <div class="container rounded bg-white mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-3 border-right">
+            <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img style="width: 10rem; height: 10rem; border-radius: 50%; object-fit: cover;"  src="/users/images/users/<%= user.image %>"><span class="font-weight-bold"><%= user.firstname%></span><span class="text-black-50"><%= user.email %></span><span> </span></div>
+        </div>
+        <div class="col-md-5 border-right" style="margin-bottom: 5rem;">
+          <div>
+            <h3 style="font-weight: 900; margin-bottom: 3rem;">Profile Details</h3>
+            <h4 style="padding: .8rem 0; font-weight: 700;">First Name: <span style="font-weight: 400;"><%= user.firstname %></span></h4>
+             <h4 style="padding: .8rem 0;  font-weight: 700">Last Name: <span  style="font-weight: 400;"><%= user.lastname%></span></h4>
+             <h4 style="padding: .8rem 0;  font-weight: 700">Member Since: <span  style="font-weight: 400;"><%=user.createdAt.toDateString()%> </span></h4>
+             <div style="margin: 1.5rem 0;">
+               <a href="/users/profile/edit/<%=user.id%>" style="background-color: blue; color: #fff; padding: .5rem .8rem; border-radius: .3rem;">Edit Profile</a>
+              <% if(addressArr.length) {%>
+                 <a href="/users/profile/viewAddress/<%=user.id%>" style="background-color: blue; color: #fff; padding: .5rem .8rem; border-radius: .3rem;">View Address</a>
+              <%}else{%>
+                 <a href="/users/profile/addAddress/<%=user.id%>" style="background-color: blue; color: #fff; padding: .5rem .8rem; border-radius: .3rem;">Add Address</a>
+              <%}%>
+             </div>
+          </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+    <!-- Footer -->
+    <%- include('partials/footer.ejs') %>
+
+    <!-- Back to top -->
+    <div class="btn-back-to-top bg0-hov" id="myBtn">
+      <span class="symbol-btn-back-to-top">
+        <i class="fa fa-angle-double-up" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <!-- Container Selection1 -->
+    <div id="dropDownSelect1"></div>
+
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/jquery/jquery-3.2.1.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/animsition/js/animsition.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/bootstrap/js/popper.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/users/vendor/bootstrap/js/bootstrap.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/select2/select2.min.js"
+    ></script>
+    <script type="text/javascript">
+      $(".selection-1").select2({
+        minimumResultsForSearch: 20,
+        dropdownParent: $("#dropDownSelect1"),
+      });
+    </script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/slick/slick.min.js"
+    ></script>
+    <script type="text/javascript" src="/users/js/slick-custom.js"></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/countdowntime/countdowntime.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/lightbox2/js/lightbox.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/sweetalert/sweetalert.min.js"
+    ></script>
+    <script type="text/javascript">
+      $(".block2-btn-addcart").each(function () {
+        var nameProduct = $(this)
+          .parent()
+          .parent()
+          .parent()
+          .find(".block2-name")
+          .html();
+        $(this).on("click", function () {
+          swal(nameProduct, "is added to cart !", "success");
+        });
+      });
+
+      $(".block2-btn-addwishlist").each(function () {
+        var nameProduct = $(this)
+          .parent()
+          .parent()
+          .parent()
+          .find(".block2-name")
+          .html();
+        $(this).on("click", function () {
+          swal(nameProduct, "is added to wishlist !", "success");
+        });
+      });
+    </script>
+    
+    <!--===============================================================================================-->
+    <script src="/users/js/main.js"></script>
+  </body>
+</html>

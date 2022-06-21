@@ -1,0 +1,149 @@
+* {
+  box-sizing: border-box;
+}
+h2,
+p {
+  margin-bottom: 1em;
+}
+
+.button,
+.card-title,
+.meta-info {
+  font-family: "Blinker", sans-serif;
+}
+
+.card-title {
+  color: var(--light-blue);
+  font-size: 28px;
+  margin-bottom: 0.5em;
+  line-height: 1.1;
+}
+
+.card-text,
+.meta-info {
+  color: #000;
+}
+
+.card-text {
+  line-height: 1.6;
+}
+
+.meta-info {
+  margin-bottom: 0;
+  font-weight: 400;
+  line-height: 1.4;
+  font-size: 1rem;
+}
+
+.span,
+.button {
+  font-weight: 700;
+}
+
+span {
+  display: block;
+  font-size: 1.85em;
+}
+
+.button {
+  font-size: 20px;
+  letter-spacing: 1px;
+  text-decoration: none;
+  padding: 0.55em 2em;
+  color: var(--dark-blue);
+  background-color: var(--light-blue);
+}
+
+.button:hover,
+.button:focus {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Card Styles */
+.card,
+.card-body,
+.cta {
+  display: flex;
+}
+.card {
+  width: 70%;
+  flex-direction: column;
+  background-color: var(--dark-blue);
+}
+
+.sub-body {
+  display: flex;
+  justify-content: space-between;
+}
+.card-header {
+  /*
+  background-color: #fff;
+  background-image: url(https://images.pexels.com/photos/735911/pexels-photo-735911.jpeg);
+  background-size: cover;
+  background-position: center;
+  */
+
+  flex-basis: 50%;
+
+  object-fit: contain;
+  /* When using flex-basis on image, there is a bug in browsers (mostly Chrome) where flex-basis is not applied.*/
+  /* To fix it, min width and hight (or whichever is cousing you problems) need to be set to 0. */
+  min-width: 0;
+  min-height: 0;
+}
+
+.card-body {
+  flex-basis: 50%;
+  padding: 2rem;
+  flex-direction: column;
+}
+
+.cta {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+}
+
+.cta p {
+  flex: 0;
+}
+
+@media screen and (min-width: 620px) {
+  .card {
+    flex-direction: row;
+  }
+
+  .card-header {
+    object-position: 20% 30%;
+  }
+}
+@media screen and (min-width: 620px) {
+  .card-title {
+    font-size: 36px;
+  }
+
+  .card-text {
+    font-size: 18px;
+  }
+}
+@media screen and (max-width: 1200px) {
+  .media {
+    flex-direction: column;
+    padding: 0 1rem;
+  }
+  .media-body {
+    width: 100%;
+    padding: 0.8rem 0;
+    /* background-color: red; */
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .sub-body {
+    flex-direction: column !important;
+    justify-content: center;
+
+    padding: 3rem 0;
+  }
+}

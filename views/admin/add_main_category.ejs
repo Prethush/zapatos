@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Main Category</title>
+    <link rel="stylesheet" href="/admin/dist/css/add_main_category.css" />
+  </head>
+  <body>
+    <form
+      class="login"
+      style="margin-top: 10rem"
+      method="post"
+      action="/admin/add_main_category"
+    >
+      <h2>Add Main Category</h2>
+      <span style="color: red; margin: 0.5rem 0; display: block"
+        ><%= error %></span
+      >
+      <input type="text" placeholder="Main Category" name="name" />
+      <input type="submit" value="Add" />
+    </form>
+
+    <script></script>
+  </body>
+</html>

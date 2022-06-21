@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>View Address</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="/users/images/icons/favicon.png" />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/users/vendor/bootstrap/css/bootstrap.min.css"
+    />
+    <!--===============================================================================================-->
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/users/css/user_dashboard.css"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/users/fonts/font-awesome-4.7.0/css/font-awesome.min.css"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/users/fonts/themify/themify-icons.css"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/users/fonts/Linearicons-Free-v1.0.0/icon-font.min.css"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/users/fonts/elegant-font/html-css/style.css"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/users/vendor/animate/animate.css"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/users/vendor/css-hamburgers/hamburgers.min.css"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/users/vendor/animsition/css/animsition.min.css"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/users/vendor/select2/select2.min.css"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/users/vendor/daterangepicker/daterangepicker.css"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/users/vendor/slick/slick.css"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/users/vendor/lightbox2/css/lightbox.min.css"
+    />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/users/css/util.css" />
+    <link rel="stylesheet" type="text/css" href="/users/css/main.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+    <!--===============================================================================================-->
+  </head>
+  <body class="animsition">
+    <!-- Header -->
+
+    <%- include('partials/header.ejs') %>
+
+    <!-- Dashboard -->
+    <section>
+      <div class="container" style="padding: 3rem 2rem">
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+          <% addressArr.forEach((a,i) =>{%>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingOne">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#flush-collapseOne<%=i%>"
+                aria-expanded="false"
+                aria-controls="flush-collapseOne"
+                style="
+                  background-color: cadetblue;
+                  color: #fff;
+                  font-weight: 700;
+                  margin-bottom: 1rem;
+                "
+              >
+                Address <%= i + 1 %>
+              </button>
+            </h2>
+            <div
+              id="flush-collapseOne<%=i%>"
+              class="accordion-collapse collapse"
+              aria-labelledby="flush-headingOne"
+              data-bs-parent="#accordionFlushExample"
+            >
+              <div class="accordion-body">
+                <h6>City: <%= a.city%></h6>
+                <h6>State: <%= a.state%></h6>
+                <h6>Address: <%= a.address%></h6>
+                <h6>Mobile No: <%= a.phone%></h6>
+                <h6>Pincode: <%= a.pincode%></h6>
+                <div style="margin: 1rem 0">
+                  <a
+                    href="/users/profile/editAddress/<%= a.id%>"
+                    style="
+                      text-decoration: none;
+                      padding: 0.4rem 0.8rem;
+                      background-color: rgb(74, 71, 255);
+                      color: #fff;
+                      font-weight: 700;
+                      border-radius: 0.3rem;
+                    "
+                    >Edit</a
+                  >
+                  <a
+                    href="/users/profile/deleteAddress/<%= a.id%>"
+                    style="
+                      text-decoration: none;
+                      padding: 0.4rem 0.8rem;
+                      background-color: rgb(251, 93, 65);
+                      color: #fff;
+                      font-weight: 700;
+                      border-radius: 0.3rem;
+                    "
+                    >Delete</a
+                  >
+                </div>
+              </div>
+            </div>
+            <%})%>
+            <div>
+              <a
+                href="/users/profile/addAddress/<%=id%>"
+                style="
+                  text-decoration: none;
+                  padding: 0.4rem 0.8rem;
+                  background-color: firebrick;
+                  color: #fff;
+                  font-weight: 700;
+                  border-radius: 0.3rem;
+                "
+                >Add New Address</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <%- include('partials/footer.ejs') %>
+
+    <!-- Back to top -->
+    <div class="btn-back-to-top bg0-hov" id="myBtn">
+      <span class="symbol-btn-back-to-top">
+        <i class="fa fa-angle-double-up" aria-hidden="true"></i>
+      </span>
+    </div>
+
+    <!-- Container Selection1 -->
+    <div id="dropDownSelect1"></div>
+
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/jquery/jquery-3.2.1.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/animsition/js/animsition.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/bootstrap/js/popper.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="/users/vendor/bootstrap/js/bootstrap.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/select2/select2.min.js"
+    ></script>
+    <script type="text/javascript">
+      $(".selection-1").select2({
+        minimumResultsForSearch: 20,
+        dropdownParent: $("#dropDownSelect1"),
+      });
+    </script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/slick/slick.min.js"
+    ></script>
+    <script type="text/javascript" src="/users/js/slick-custom.js"></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/countdowntime/countdowntime.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/lightbox2/js/lightbox.min.js"
+    ></script>
+    <!--===============================================================================================-->
+    <script
+      type="text/javascript"
+      src="/users/vendor/sweetalert/sweetalert.min.js"
+    ></script>
+    <script type="text/javascript">
+      $(".block2-btn-addcart").each(function () {
+        var nameProduct = $(this)
+          .parent()
+          .parent()
+          .parent()
+          .find(".block2-name")
+          .html();
+        $(this).on("click", function () {
+          swal(nameProduct, "is added to cart !", "success");
+        });
+      });
+
+      $(".block2-btn-addwishlist").each(function () {
+        var nameProduct = $(this)
+          .parent()
+          .parent()
+          .parent()
+          .find(".block2-name")
+          .html();
+        $(this).on("click", function () {
+          swal(nameProduct, "is added to wishlist !", "success");
+        });
+      });
+    </script>
+    <!-- JavaScript Bundle with Popper -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+      crossorigin="anonymous"
+    ></script>
+    <!--===============================================================================================-->
+    <script src="/users/js/main.js"></script>
+  </body>
+</html>

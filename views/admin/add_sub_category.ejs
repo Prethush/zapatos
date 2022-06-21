@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Sub Category</title>
+    <link rel="stylesheet" href="/admin/dist/css/add_sub_category.css" />
+  </head>
+  <body>
+    <form
+      class="login"
+      style="margin-top: 10rem"
+      action="/admin/add_sub_category"
+      method="post"
+    >
+      <h2>Select Sub Category</h2>
+      <span style="color: red; margin: 0.5rem 0; display: block"
+        ><%= error %></span
+      >
+      <div style="margin-top: 1rem">
+        <select
+          aria-label="Default select example"
+          style="width: 100%; padding: 0.5rem 0; font-size: 1.2rem; outline: 0"
+          name="name"
+        >
+          <option selected value="null">Sub category</option>
+          <option value="Men">Men</option>
+          <option value="Women">Women</option>
+          <option value="Kids">Kids</option>
+        </select>
+        <select
+          aria-label="Default select example"
+          style="
+            width: 100%;
+            padding: 0.5rem 0;
+            font-size: 1.2rem;
+            outline: 0;
+            margin-top: 1.5rem;
+          "
+          name="mainCategory"
+        >
+          <option selected value="null">Select Main Category</option>
+          <% categories.forEach((c,i) => {%>
+          <option value="<%= c %>"><%= c %></option>
+          <%})%>
+        </select>
+      </div>
+      <input type="submit" value="Add" style="cursor: pointer" />
+    </form>
+  </body>
+</html>
