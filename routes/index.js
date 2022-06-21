@@ -77,6 +77,13 @@ router.get("/product/:slug", auth.authOptional, async (req, res, next) => {
     let variant = await Variant.findOne({ slug }).populate("size");
     let wishList = await WishList.findOne({ variant: variant.id, user: id });
     let product = await Product.findById(variant.product).populate("variants");
+    let relatedProducts = await Product.find({
+      mainCategory: product.mainCategory,
+    })
+      .populate("variants")
+      .sort({ createdAt: -1 })
+      .limit(8);
+    console.log(relatedProducts, "related");
     if (id) {
       user = await User.findById(req.user.userId);
       fullName = user.firstname;
@@ -99,6 +106,7 @@ router.get("/product/:slug", auth.authOptional, async (req, res, next) => {
       wishList,
       wishListCount: wishListCount.length,
       isVisible: index === -1 ? true : false,
+      relatedProducts,
     });
   } catch (err) {
     next(err);
