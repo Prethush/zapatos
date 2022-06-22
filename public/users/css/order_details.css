@@ -12,6 +12,14 @@ p {
   font-family: "Blinker", sans-serif;
 }
 
+.sub-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.card {
+  width: 80%;
+}
 .card-title {
   color: var(--light-blue);
   font-size: 28px;
@@ -145,5 +153,23 @@ span {
     justify-content: center;
 
     padding: 3rem 0;
+  }
+}
+
+@media screen and (max-width: 776px) {
+  .card {
+    width: 90%;
+  }
+  .step {
+    width: 100%;
+  }
+  .text {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 620px) {
+  .text {
+    font-size: 0.6rem;
   }
 }

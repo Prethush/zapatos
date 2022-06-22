@@ -8,60 +8,63 @@
     <link rel="stylesheet" href="/users/css/page_not_found.css" />
   </head>
 
-  <body class="bg-purple">
-    <div class="stars">
-      <% if(admin_token) {%>
-      <div class="central-body">
-        <img
-          class="image-404"
-          src="http://salehriaz.com/404Page/img/404.svg"
-          width="300px"
-        />
-        <a href="/admin/home" class="btn-go-home">GO BACK HOME</a>
-      </div>
-      <%}else{%>
-      <div class="central-body">
-        <img
-          class="image-404"
-          src="http://salehriaz.com/404Page/img/404.svg"
-          width="300px"
-        />
-        <a href="/" class="btn-go-home">GO BACK HOME</a>
-      </div>
-      <%}%>
-      <div class="objects">
-        <img
-          class="object_rocket"
-          src="http://salehriaz.com/404Page/img/rocket.svg"
-          width="40px"
-        />
-        <div class="earth-moon">
-          <img
-            class="object_earth"
-            src="http://salehriaz.com/404Page/img/earth.svg"
-            width="100px"
-          />
-          <img
-            class="object_moon"
-            src="http://salehriaz.com/404Page/img/moon.svg"
-            width="80px"
-          />
+  <body>
+    <div class="container">
+      <div class="error">
+        <p class="p">4</p>
+        <span class="dracula">
+          <div class="con">
+            <div class="hair"></div>
+            <div class="hair-r"></div>
+            <div class="head"></div>
+            <div class="eye"></div>
+            <div class="eye eye-r"></div>
+            <div class="mouth"></div>
+            <div class="blod"></div>
+            <div class="blod blod2"></div>
+          </div>
+        </span>
+        <p class="p">4</p>
+
+        <div class="page-ms">
+          <p class="page-msg">Oops, the page you're looking for Disappeared</p>
+          <% if(admin_token) {%>
+          <a
+            href="/admin/home"
+            class="btn btn-primar"
+            style="
+              background-color: white;
+              padding: 0.5rem 0.6rem;
+              border-radius: 0.3rem;
+              text-decoration: none;
+              font-size: 1.3rem;
+            "
+            >Go to Home</a
+          >
+          <%}else{%>
+          <a
+            href="/"
+            class="btn btn-primary"
+            style="
+              background-color: white;
+              padding: 0.5rem 0.6rem;
+              border-radius: 0.3rem;
+              text-decoration: none;
+              font-size: 1.3rem;
+            "
+            >Go to Home</a
+          >
+          <%}%>
         </div>
-        <div class="box_astronaut">
-          <img
-            class="object_astronaut"
-            src="http://salehriaz.com/404Page/img/astronaut.svg"
-            width="140px"
-          />
-        </div>
-      </div>
-      <div class="glowing_stars">
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
-        <div class="star"></div>
       </div>
     </div>
+
+    <iframe
+      style="width: 0; height: 0; border: 0; border: none"
+      scrolling="no"
+      frameborder="no"
+      allow="autoplay"
+      src="https://instaud.io/_/2Vvu.mp3"
+    ></iframe>
   </body>
 </html>
