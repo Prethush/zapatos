@@ -103,7 +103,7 @@
 
     <!-- Dashboard -->
     <section>
-      <div class="container" style="padding: 3rem 2rem">
+      <div class="container" style="padding: 3rem 2rem; min-height: 60vh">
         <div class="accordion accordion-flush" id="accordionFlushExample">
           <% addressArr.forEach((a,i) =>{%>
           <div class="accordion-item">
@@ -195,10 +195,6 @@
       </span>
     </div>
 
-    <!-- Container Selection1 -->
-    <div id="dropDownSelect1"></div>
-
-    <!--===============================================================================================-->
     <script
       type="text/javascript"
       src="/users/vendor/jquery/jquery-3.2.1.min.js"
@@ -208,73 +204,6 @@
       type="text/javascript"
       src="/users/vendor/animsition/js/animsition.min.js"
     ></script>
-    <!--===============================================================================================-->
-    <script
-      type="text/javascript"
-      src="/users/vendor/bootstrap/js/popper.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="/users/vendor/bootstrap/js/bootstrap.min.js"
-    ></script>
-    <!--===============================================================================================-->
-    <script
-      type="text/javascript"
-      src="/users/vendor/select2/select2.min.js"
-    ></script>
-    <script type="text/javascript">
-      $(".selection-1").select2({
-        minimumResultsForSearch: 20,
-        dropdownParent: $("#dropDownSelect1"),
-      });
-    </script>
-    <!--===============================================================================================-->
-    <script
-      type="text/javascript"
-      src="/users/vendor/slick/slick.min.js"
-    ></script>
-    <script type="text/javascript" src="/users/js/slick-custom.js"></script>
-    <!--===============================================================================================-->
-    <script
-      type="text/javascript"
-      src="/users/vendor/countdowntime/countdowntime.js"
-    ></script>
-    <!--===============================================================================================-->
-    <script
-      type="text/javascript"
-      src="/users/vendor/lightbox2/js/lightbox.min.js"
-    ></script>
-    <!--===============================================================================================-->
-    <script
-      type="text/javascript"
-      src="/users/vendor/sweetalert/sweetalert.min.js"
-    ></script>
-    <script type="text/javascript">
-      $(".block2-btn-addcart").each(function () {
-        var nameProduct = $(this)
-          .parent()
-          .parent()
-          .parent()
-          .find(".block2-name")
-          .html();
-        $(this).on("click", function () {
-          swal(nameProduct, "is added to cart !", "success");
-        });
-      });
-
-      $(".block2-btn-addwishlist").each(function () {
-        var nameProduct = $(this)
-          .parent()
-          .parent()
-          .parent()
-          .find(".block2-name")
-          .html();
-        $(this).on("click", function () {
-          swal(nameProduct, "is added to wishlist !", "success");
-        });
-      });
-    </script>
-    <!-- JavaScript Bundle with Popper -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
