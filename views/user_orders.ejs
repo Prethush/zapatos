@@ -15,8 +15,6 @@
       rel="stylesheet"
       href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css"
     />
-
-    <!--===============================================================================================-->
   </head>
   <body class="animsition">
     <!-- Header -->
@@ -24,10 +22,10 @@
     <%- include('partials/header.ejs') %>
 
     <!-- Content page -->
-    <div class="container-fluid" style="padding: 0 5rem 3rem 5rem">
+    <div class="container-fluid" style="padding: 0 3rem 3rem 3rem">
       <h1 class="text-center my-4" style="font-weight: 700">Orders</h1>
       <div class="table-responsive">
-        <table class="table" id="tableContent">
+        <table class="table table-bordered" id="tableContent">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -81,6 +79,7 @@
                     border-radius: 0.3rem;
                     pointer-events: none;
                   "
+                  class="btn"
                 >
                   Cancel Order
                 </a>
@@ -95,7 +94,9 @@
                     padding: 0.5rem 0.8rem;
                     border-radius: 0.3rem;
                     font-weight: 600;
+                    font-size: 1rem;
                   "
+                  class="btn"
                   >Details</a
                 >
               </td>

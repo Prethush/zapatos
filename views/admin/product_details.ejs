@@ -67,11 +67,11 @@
                       <h2 class="box-title m-t-40 font-weight-bold" style="font-size: 1.2rem;">Product description</h2>
                       <p ><%= product.description %></p>
                      
-                      <h2 class="m-t-40">Rs. <%= product.price %></h2>
+                      <h2 class="m-t-40">&#8377; <%= product.price.toLocaleString() %></h2>
                         <div class="d-flex">
-                            <a href="/admin/product/edit/<%= product.id %>" style="text-transform: uppercase; background-color: rgb(66, 66, 192); color: #fff; padding: .5rem 1.3rem; border-radius: .3rem; font-weight: 600;margin-right: .5rem;">Edit</a>
-                              <a href="/admin/product/delete/<%= product.id %>" style="text-transform: uppercase; background-color: rgb(192, 70, 66); color: #fff; padding: .5rem 1.3rem; border-radius: .3rem; font-weight: 600;margin-right: .5rem;">Delete</a>
-                        <a href="/admin/product/add_variant/<%= product.id%>" class="mr-4" style="text-transform: uppercase; background-color: rgb(66, 66, 192); color: #fff; padding: .5rem 1.3rem; border-radius: .3rem; font-weight: 600;">Add Variants</a>
+                            <a href="/admin/product/edit/<%= product.id %>" style="text-transform: uppercase; background-color: rgb(66, 66, 192); color: #fff; padding: .5rem 1.3rem; border-radius: .3rem; font-weight: 600;margin-right: .5rem; margin-bottom: .5rem;" class="btn">Edit</a>
+                              <a href="/admin/product/delete/<%= product.id %>" style="text-transform: uppercase; background-color: rgb(192, 70, 66); color: #fff; padding: .5rem 1.3rem; border-radius: .3rem; font-weight: 600;margin-right: .5rem; margin-bottom: .5rem">Delete</a>
+                        <a href="/admin/product/add_variant/<%= product.id%>" class="mr-4 btn" style="text-transform: uppercase; background-color: rgb(66, 66, 192); color: #fff; padding: .5rem 1.3rem; border-radius: .3rem; font-weight: 600; margin-bottom: .5rem">Add Variants</a>
                       </div>
                     </div>
                 </div>
@@ -94,11 +94,11 @@
                                     <h6 class="card-title mt-2 text-center">Rs.<%=product.price%></h6>
                                 </div>
                                 <div class="">
-                                  <a href="/admin/product/variant/edit/<%= p.id %>" style="background-color: rgb(111, 111, 228); padding: .3rem .8rem; color: #fff; border-radius: .3rem; margin-right: .5rem;">Edit</a>
+                                  <a href="/admin/product/variant/edit/<%= p.id %>" class="btn" style="background-color: rgb(111, 111, 228); padding: .3rem .8rem; color: #fff; border-radius: .3rem; margin-right: .5rem;margin-bottom: .5rem"">Edit</a>
                                   
-                                  <a href="/admin/product/variant/delete/<%=p.id%>" style="background-color: rgb(236, 93, 93); padding: .3rem .8rem; color: #fff; border-radius: .3rem;">Delete</a>
-                                  <a href="/admin/variant/add_size/<%=p.id%>" style="background-color: rgb(236, 93, 93); padding: .3rem .8rem; color: #fff; border-radius: .3rem;">Add Sizes</a>
-                                  <a href="/admin/variant/sizes/<%= p.id %>" style="background-color: rgb(110, 156, 216); padding: .3rem .8rem; color: #fff; border-radius: .3rem;">View Sizes</a>
+                                  <a href="/admin/product/variant/delete/<%=p.id%>" class="btn" style="background-color: rgb(236, 93, 93); padding: .3rem .8rem; color: #fff; border-radius: .3rem;margin-bottom: .5rem"">Delete</a>
+                                  <a href="/admin/variant/add_size/<%=p.id%>" class="btn" style="background-color: rgb(236, 93, 93); padding: .3rem .8rem; color: #fff; border-radius: .3rem;margin-bottom: .5rem; margin-left: .5rem;">Add Sizes</a>
+                                  <a href="/admin/variant/sizes/<%= p.id %>" class="btn" style="background-color: rgb(110, 156, 216); padding: .3rem .8rem; color: #fff; border-radius: .3rem;margin-bottom: .5rem;">View Sizes</a>
                                 </div>
                             </div>
                         </div>

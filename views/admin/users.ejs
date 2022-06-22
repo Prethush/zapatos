@@ -64,7 +64,7 @@
                 <div class="card-body">
                   <h5 class="card-title">All Users</h5>
                   <div class="table-responsive m-t-30">
-                    <table class="table">
+                    <table class="table table-bordered">
                       <thead>
                         <tr>
                           <th>Full Name</th>
@@ -113,6 +113,7 @@
                                 padding: 0.2rem 0.6rem;
                                 border-radius: 0.3rem;
                               "
+                              class="btn"
                               >View Orders</a
                             >
                           </td>
@@ -126,6 +127,7 @@
                                   padding: 0.1rem 0.5rem;
                                   border-radius: 0.2rem;
                                 "
+                                class="btn"
                                 >Delete</a
                               >
                               <% if(u.isBlocked) { %>
@@ -137,6 +139,7 @@
                                   padding: 0.1rem 0.5rem;
                                   border-radius: 0.2rem;
                                 "
+                                class="btn"
                                 >Unblock</a
                               >
                               <%} else{%>
@@ -148,6 +151,7 @@
                                   padding: 0.1rem 0.5rem;
                                   border-radius: 0.2rem;
                                 "
+                                class="btn"
                                 >Block</a
                               >
                               <%}%>

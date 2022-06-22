@@ -104,6 +104,7 @@
                 src="/admin/products/<%=s.images[0].img%>"
                 alt="image"
                 style="width: 100%; object-fit: cover"
+                class="rounded mx-auto d-block"
               />
             </a>
             <%})%>
@@ -353,7 +354,8 @@
           <div class="slick2">
             <% relatedProducts.forEach((p,i) => {%>
               <% if(p.variants[0]){ %>
-                <div class="item-slick2 p-l-15 p-r-15">
+                <% if(String(p.id) !== String(product.id)){%>
+                     <div class="item-slick2 p-l-15 p-r-15">
               <!-- Block2 -->
               <div class="block2">
                 <div
@@ -378,6 +380,7 @@
                 </div>
               </div>
             </div>     
+                <%}%>
               <%}%>
             <%})%>
             
