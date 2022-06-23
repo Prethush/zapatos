@@ -110,7 +110,7 @@ router.get("/logout", (req, res) => {
 // user cart
 router.get("/cart/:id", auth.verifyToken, async (req, res, next) => {
   if (req.user) {
-    let id = req.user.userId;
+    let id = req.params.id;
     try {
       let user = await User.findById(id);
       let cart = await Cart.find({ user: req.user.userId }).populate("variant");
@@ -226,7 +226,14 @@ router.get("/wishlist/:id", auth.verifyToken, async (req, res, next) => {
     console.log("abc");
     let { id } = req.params;
     try {
-      let user = await User.findById(req.user.userId);
+      let user = await User.findById(id);
+      if (!user) {
+        return res.render("page_not_found", {
+          admin_token: false,
+          user_token: true,
+          errors: null,
+        });
+      }
       let cart = await Cart.find({ user: req.user.userId }).populate("variant");
       let cartCount = cart.length;
       let wishList = await WishList.find({ user }).populate("variant");
@@ -267,12 +274,20 @@ router.get(
 // render user profile page
 router.get("/profile/:id", auth.verifyToken, async (req, res, next) => {
   if (req.user) {
-    let id = req.user.userId;
+    let { id } = req.params;
     try {
-      let cart = await Cart.find({ user: req.user.userId }).populate("variant");
+      let user = await User.findById(id);
+      if (!user) {
+        return res.render("page_not_found", {
+          admin_token: false,
+          user_token: true,
+          errors: null,
+        });
+      }
+      let cart = await Cart.find({ user: id }).populate("variant");
       let cartCount = cart.length;
       let wishList = await WishList.find({ user: id }).populate("variant");
-      let user = await User.findById(req.user.userId);
+
       let addressArr = await Address.find({ user: id });
       res.render("user_dashboard", {
         name: user.firstname,
@@ -512,11 +527,13 @@ router.post(
 );
 // render checkout page
 router.get("/checkout/:id", auth.verifyToken, async (req, res, next) => {
+  let { id } = req.params;
   if (req.user) {
     let userId = req.user.userId;
     let fullName = req.user.fullName;
     let image = req.user.image;
     try {
+      let user = await User.findById(id);
       let cart = await Cart.find({ user: req.user.userId }).populate("variant");
       let cartCount = cart.length;
       let wishList = await WishList.find({ user: userId }).populate("variant");
@@ -847,11 +864,21 @@ router.get("/payment-success/:id", auth.verifyToken, async (req, res, next) => {
 
 // A particular user's order list
 router.get("/orders/:id", auth.verifyToken, async (req, res, next) => {
+  let { id } = req.params;
+  console.log(id, "id");
   if (req.user) {
     let userId = req.user.userId;
 
     try {
-      let user = await User.findById(req.user.userId);
+      let user = await User.findById(id);
+      if (!user) {
+        return res.render("page_not_found", {
+          admin_token: false,
+          user_token: true,
+          errors: null,
+        });
+        s;
+      }
       let cart = await Cart.find({ user: req.user.userId }).populate("variant");
       let cartCount = cart.length;
       let wishList = await WishList.find({ user: userId }).populate("variant");

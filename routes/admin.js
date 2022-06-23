@@ -103,6 +103,10 @@ router.post("/login", async (req, res, next) => {
 // router.use(auth.adminAuth);
 
 router.get("/home", auth.adminAuth, async (req, res, next) => {
+  res.header(
+    "Cache-control",
+    "no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0"
+  );
   let { startDate, endDate } = req.query;
   let d1, d2, text;
   if (!startDate || !endDate) {

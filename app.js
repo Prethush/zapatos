@@ -38,14 +38,16 @@ app.use("/users", userRouter);
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   let { admin_token, user_token } = req.cookies;
-  res.render("page_not_found", { admin_token, user_token });
+  res.render("page_not_found", { admin_token, user_token, errors: null });
 });
 
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
   res.status(err.status || 500);
-  res.json({ errors: { body: [err] } });
+  let errors = err;
+  let { admin_token, user_token } = req.cookies;
+  res.render("page_not_found", { admin_token, user_token, errors });
 });
 
 module.exports = app;

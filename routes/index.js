@@ -12,6 +12,10 @@ const MainCategory = require("../models/MainCategory");
 const WishList = require("../models/WishList");
 
 router.get("/", auth.authOptional, async (req, res, next) => {
+  res.header(
+    "Cache-control",
+    "no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0"
+  );
   let fullName = null;
   let image = null;
   let id = req.user ? req.user.userId : null;
@@ -75,6 +79,7 @@ router.get("/product/:slug", auth.authOptional, async (req, res, next) => {
     index = -1;
   try {
     let variant = await Variant.findOne({ slug }).populate("size");
+
     let wishList = await WishList.findOne({ variant: variant.id, user: id });
     let product = await Product.findById(variant.product).populate("variants");
     let relatedProducts = await Product.find({
@@ -123,6 +128,7 @@ router.post(
       });
     }
     const { slug } = req.params;
+
     const { size, quantity } = req.body;
     if (size == "Choose an option") {
       return res.json({
