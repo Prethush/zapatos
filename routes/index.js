@@ -11,109 +11,120 @@ const SubCategory = require("../models/SubCategory");
 const MainCategory = require("../models/MainCategory");
 const WishList = require("../models/WishList");
 
-router.get("/", auth.authOptional, async (req, res, next) => {
-  console.log("abc");
-  let fullName = null;
-  let image = null;
-  let id = req.user ? req.user.userId : null;
-  let user = null;
-  let cartCount = 0,
-    wishListCount = 0;
-  let { admin_token } = req.cookies;
-  if (admin_token) {
-    res.redirect("/admin/home");
-  }
-  try {
-    const products = await Product.find({})
-      .populate("variants")
-      .sort({ createdAt: -1 })
-      .limit(29);
-    const products6 = products.slice(0, 6);
-    let products5 = [];
-    products6.forEach((p, i) => {
-      if (p && p.variants[0]) {
-        products5.push(p);
+router.get(
+  "/",
+  auth.adminRedirect,
+  auth.authOptional,
+  async (req, res, next) => {
+    let fullName = null;
+    let image = null;
+    let id = req.user ? req.user.userId : null;
+    let user = null;
+    let cartCount = 0,
+      wishListCount = 0;
+    let { admin_token } = req.cookies;
+    if (admin_token) {
+      return res.redirect("/admin/home");
+    }
+    try {
+      const products = await Product.find({})
+        .populate("variants")
+        .sort({ createdAt: -1 })
+        .limit(29);
+      const products6 = products.slice(0, 6);
+      let products5 = [];
+      products6.forEach((p, i) => {
+        if (p && p.variants[0]) {
+          products5.push(p);
+        }
+      });
+      console.log(products5.length, "prod");
+      const products2 = products.slice(6, 9);
+      const products3 = products.slice(9, 17);
+      const products4 = products.slice(17, 29);
+
+      if (id) {
+        user = await User.findById(req.user.userId);
+        fullName = user.firstname;
+        image = user.image;
+        cartCount = await Cart.find({ user: req.user.userId }).count();
+        wishListCount = await WishList.find({ user: req.user.userId });
       }
-    });
-    console.log(products5.length, "prod");
-    const products2 = products.slice(6, 9);
-    const products3 = products.slice(9, 17);
-    const products4 = products.slice(17, 29);
 
-    if (id) {
-      user = await User.findById(req.user.userId);
-      fullName = user.firstname;
-      image = user.image;
-      cartCount = await Cart.find({ user: req.user.userId }).count();
-      wishListCount = await WishList.find({ user: req.user.userId });
+      res.render("home_page", {
+        products5,
+        products2,
+        products3,
+        products4,
+        name: fullName,
+        image,
+        cartCount,
+        id,
+        wishListCount: wishListCount.length,
+      });
+    } catch (err) {
+      next(err);
     }
-
-    res.render("home_page", {
-      products5,
-      products2,
-      products3,
-      products4,
-      name: fullName,
-      image,
-      cartCount,
-      id,
-      wishListCount: wishListCount.length,
-    });
-  } catch (err) {
-    next(err);
   }
-});
+);
 
-router.get("/product/:slug", auth.authOptional, async (req, res, next) => {
-  let fullName = undefined;
-  let image = undefined;
-  let user = undefined;
-  let id = req.user ? req.user.userId : undefined;
-  const { slug } = req.params;
-  let cartCount = 0,
-    wishListCount = 0,
-    cart,
-    index = -1;
-  try {
-    let variant = await Variant.findOne({ slug }).populate("size");
+router.get(
+  "/product/:slug",
+  auth.adminRedirect,
+  auth.authOptional,
+  async (req, res, next) => {
+    let fullName = undefined;
+    let image = undefined;
+    let user = undefined;
+    let id = req.user ? req.user.userId : undefined;
+    const { slug } = req.params;
+    let cartCount = 0,
+      wishListCount = 0,
+      cart,
+      index = -1;
+    try {
+      let variant = await Variant.findOne({ slug }).populate("size");
 
-    let wishList = await WishList.findOne({ variant: variant.id, user: id });
-    let product = await Product.findById(variant.product).populate("variants");
-    let relatedProducts = await Product.find({
-      mainCategory: product.mainCategory,
-    })
-      .populate("variants")
-      .sort({ createdAt: -1 })
-      .limit(8);
-    console.log(relatedProducts, "related");
-    if (id) {
-      user = await User.findById(req.user.userId);
-      fullName = user.firstname;
-      image = user.image;
-      cartCount = await Cart.find({ user: req.user.userId }).count();
-      wishListCount = await WishList.find({ user: req.user.userId });
-      cart = await Cart.find({ user: id });
-      index = cart.findIndex((c) => c.variant.equals(variant.id));
+      let wishList = await WishList.findOne({ variant: variant.id, user: id });
+      let product = await Product.findById(variant.product).populate(
+        "variants"
+      );
+      let relatedProducts = await Product.find({
+        mainCategory: product.mainCategory,
+      })
+        .populate("variants")
+        .sort({ createdAt: -1 })
+        .limit(8);
+      console.log(relatedProducts, "related");
+      if (id) {
+        user = await User.findById(req.user.userId);
+        fullName = user.firstname;
+        image = user.image;
+        cartCount = await Cart.find({ user: req.user.userId }).count();
+        wishListCount = await WishList.find({ user: req.user.userId });
+        cart = await Cart.find({ user: id });
+        index = cart.findIndex((c) => c.variant.equals(variant.id));
+      }
+      console.log(product, "product");
+      res.render("product_details", {
+        variant,
+        product,
+        name: fullName,
+        image,
+        error: req.flash("error"),
+        msg: req.flash("msg"),
+        cartCount,
+        id,
+        wishList,
+        wishListCount: wishListCount.length,
+        isVisible: index === -1 ? true : false,
+        relatedProducts,
+      });
+    } catch (err) {
+      next(err);
     }
-    console.log(product, "product");
-    res.render("product_details", {
-      variant,
-      product,
-      name: fullName,
-      image,
-      error: req.flash("error"),
-      msg: req.flash("msg"),
-      cartCount,
-      id,
-      wishList,
-      wishListCount: wishListCount.length,
-      isVisible: index === -1 ? true : false,
-      relatedProducts,
-    });
-  } catch (err) {
-    next(err);
   }
-});
+);
 
 router.post(
   "/product/addCart/:slug",
@@ -170,91 +181,101 @@ router.post(
   }
 );
 
-router.get("/products/men", auth.verifyToken, async (req, res, next) => {
-  let { page_num } = req.query;
-  page_num = !page_num ? 0 : page_num;
-  let fullName = undefined;
-  let image = undefined;
-  let id = req.user ? req.user.userId : undefined;
-  let user = undefined;
-  let cartCount = 0,
-    wishListCount = 0;
+router.get(
+  "/products/men",
+  auth.adminRedirect,
+  auth.verifyToken,
+  async (req, res, next) => {
+    let { page_num } = req.query;
+    page_num = !page_num ? 0 : page_num;
+    let fullName = undefined;
+    let image = undefined;
+    let id = req.user ? req.user.userId : undefined;
+    let user = undefined;
+    let cartCount = 0,
+      wishListCount = 0;
 
-  try {
-    if (id) {
-      user = await User.findById(req.user.userId);
-      fullName = user.firstname;
-      image = user.image;
-      cartCount = await Cart.find({ user: req.user.userId }).count();
-      wishListCount = await WishList.find({ user: req.user.userId });
+    try {
+      if (id) {
+        user = await User.findById(req.user.userId);
+        fullName = user.firstname;
+        image = user.image;
+        cartCount = await Cart.find({ user: req.user.userId }).count();
+        wishListCount = await WishList.find({ user: req.user.userId });
+      }
+      let men = await SubCategory.findOne({ name: "men" });
+      let productCount = 0;
+      let products = [];
+      if (men) {
+        productCount = await Product.find({ subCategory: men.id }).count();
+        products = await Product.find({ subCategory: men.id })
+          .populate("variants")
+          .skip(page_num * 9)
+          .limit(9);
+      }
+      res.render("men", {
+        name: fullName,
+        image,
+        id,
+        page_num,
+        cartCount,
+        pageCount: Math.ceil(productCount / 9),
+        products,
+        wishListCount: wishListCount.length,
+      });
+    } catch (err) {
+      next(err);
     }
-    let men = await SubCategory.findOne({ name: "men" });
-    let productCount = 0;
-    let products = [];
-    if (men) {
-      productCount = await Product.find({ subCategory: men.id }).count();
-      products = await Product.find({ subCategory: men.id })
-        .populate("variants")
-        .skip(page_num * 9)
-        .limit(9);
-    }
-    res.render("men", {
-      name: fullName,
-      image,
-      id,
-      page_num,
-      cartCount,
-      pageCount: Math.ceil(productCount / 9),
-      products,
-      wishListCount: wishListCount.length,
-    });
-  } catch (err) {
-    next(err);
   }
-});
+);
 
-router.get("/products/women", auth.verifyToken, async (req, res, next) => {
-  let { page_num } = req.query;
-  page_num = !page_num ? 0 : page_num;
-  let fullName = undefined;
-  let image = undefined;
-  let id = req.user ? req.user.userId : undefined;
-  let user = undefined;
-  let cartCount = 0,
-    wishListCount = 0;
+router.get(
+  "/products/women",
+  auth.adminRedirect,
+  auth.verifyToken,
+  async (req, res, next) => {
+    let { page_num } = req.query;
+    page_num = !page_num ? 0 : page_num;
+    let fullName = undefined;
+    let image = undefined;
+    let id = req.user ? req.user.userId : undefined;
+    let user = undefined;
+    let cartCount = 0,
+      wishListCount = 0;
 
-  try {
-    if (id) {
-      user = await User.findById(req.user.userId);
-      fullName = user.firstname;
-      image = user.image;
-      cartCount = await Cart.find({ user: req.user.userId }).count();
-      wishListCount = await WishList.find({ user: req.user.userId });
+    try {
+      if (id) {
+        user = await User.findById(req.user.userId);
+        fullName = user.firstname;
+        image = user.image;
+        cartCount = await Cart.find({ user: req.user.userId }).count();
+        wishListCount = await WishList.find({ user: req.user.userId });
+      }
+      let women = await SubCategory.findOne({ name: "women" });
+      let productCount = 0;
+      let products = [];
+      if (women) {
+        productCount = await Product.find({ subCategory: women.id }).count();
+        products = await Product.find({ subCategory: women.id })
+          .populate("variants")
+          .skip(page_num * 9)
+          .limit(9);
+      }
+      res.render("women", {
+        name: fullName,
+        image,
+        id,
+        page_num,
+        cartCount,
+        pageCount: Math.ceil(productCount / 9),
+        products,
+        wishListCount: wishListCount.length,
+      });
+    } catch (err) {
+      next(err);
     }
-    let women = await SubCategory.findOne({ name: "women" });
-    let productCount = 0;
-    let products = [];
-    if (women) {
-      productCount = await Product.find({ subCategory: women.id }).count();
-      products = await Product.find({ subCategory: women.id })
-        .populate("variants")
-        .skip(page_num * 9)
-        .limit(9);
-    }
-    res.render("women", {
-      name: fullName,
-      image,
-      id,
-      page_num,
-      cartCount,
-      pageCount: Math.ceil(productCount / 9),
-      products,
-      wishListCount: wishListCount.length,
-    });
-  } catch (err) {
-    next(err);
   }
-});
+);
 
 router.get("/products/men/priceSortAdvanced", async (req, res, next) => {
   let { basic, advanced, category, search } = req.query;

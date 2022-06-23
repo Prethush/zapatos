@@ -66,4 +66,20 @@ module.exports = {
       next();
     }
   },
+  adminRedirect: (req, res, next) => {
+    let { admin_token } = req.cookies;
+    if (admin_token) {
+      return res.redirect("/admin/home");
+    } else {
+      next();
+    }
+  },
+  userRedirect: (req, res, next) => {
+    let { user_token } = req.cookies;
+    if (user_token) {
+      return res.redirect("/");
+    } else {
+      next();
+    }
+  },
 };

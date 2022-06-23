@@ -55,7 +55,13 @@ const instance = new Razorpay({
 
 // Render user signup page
 
-router.get("/signup", auth.verifyToken, renderSignUpPage);
+router.get(
+  "/signup",
+  auth.userRedirect,
+  auth.adminRedirect,
+  auth.verifyToken,
+  renderSignUpPage
+);
 
 // Process user's signup request
 
@@ -64,6 +70,7 @@ router.post("/signup", upload.single("image"), signUpRequest);
 // Render Signup Email verification page
 router.get(
   "/signup/emailverification/:id",
+  auth.adminRedirect,
   auth.verifyToken,
   renderEmailVerification
 );
@@ -72,13 +79,13 @@ router.get(
 router.post("/signup/emailVerification/:id", processEmailVerification);
 
 // Render user's Login Page
-router.get("/login", auth.verifyToken, renderLoginPage);
+router.get("/login", auth.adminRedirect, auth.verifyToken, renderLoginPage);
 
 // Process user's Login request
 router.post("/login", processLoginRequest);
 
 // render password change email verification page
-router.get("/confirmEmail", (req, res, next) => {
+router.get("/confirmEmail", auth.adminRedirect, (req, res, next) => {
   res.render("forgot_password", {
     error: req.flash("error"),
     msg: req.flash("msg"),
@@ -89,7 +96,7 @@ router.get("/confirmEmail", (req, res, next) => {
 router.post("/confirmEmail", passwordChangeEmailVerify);
 
 // render password change page
-router.get("/passwordChange/:id", (req, res) => {
+router.get("/passwordChange/:id", auth.adminRedirect, (req, res) => {
   const { id } = req.params;
   res.render("password_change", {
     id,
@@ -108,37 +115,49 @@ router.get("/logout", (req, res) => {
 });
 
 // user cart
-router.get("/cart/:id", auth.verifyToken, async (req, res, next) => {
-  if (req.user) {
-    let id = req.params.id;
-    try {
-      let user = await User.findById(id);
-      let cart = await Cart.find({ user: req.user.userId }).populate("variant");
-      let wishList = await WishList.find({ user: id });
-      let sizeArr = [];
-      for (let i = 0; i < cart.length; i++) {
-        let size = await Size.findOne({
-          variant: cart[i].variant,
-          size: cart[i].size,
+router.get(
+  "/cart/:id",
+  auth.adminRedirect,
+  auth.verifyToken,
+  async (req, res, next) => {
+    let { admin_token } = req.cookies;
+    if (admin_token) {
+      console.log("abc");
+      return res.render("restricted_access");
+    }
+    if (req.user) {
+      let id = req.params.id;
+      try {
+        let user = await User.findById(id);
+        let cart = await Cart.find({ user: req.user.userId }).populate(
+          "variant"
+        );
+        let wishList = await WishList.find({ user: id });
+        let sizeArr = [];
+        for (let i = 0; i < cart.length; i++) {
+          let size = await Size.findOne({
+            variant: cart[i].variant,
+            size: cart[i].size,
+          });
+          sizeArr.push(size.stock);
+        }
+        console.log(cart, "cart");
+        let cartCount = cart.length;
+        res.render("cart", {
+          name: user.firstname,
+          image: user.image,
+          id,
+          cartCount,
+          cart,
+          wishListCount: wishList.length,
+          sizeArr,
         });
-        sizeArr.push(size.stock);
+      } catch (err) {
+        next(err);
       }
-      console.log(cart, "cart");
-      let cartCount = cart.length;
-      res.render("cart", {
-        name: user.firstname,
-        image: user.image,
-        id,
-        cartCount,
-        cart,
-        wishListCount: wishList.length,
-        sizeArr,
-      });
-    } catch (err) {
-      next(err);
     }
   }
-});
+);
 
 router.post("/cart/update/:id", auth.verifyToken, async (req, res, next) => {
   if (req.user) {
@@ -221,29 +240,36 @@ router.get("/cart/delete/:id", auth.verifyToken, async (req, res, next) => {
 });
 
 // render wishlist page
-router.get("/wishlist/:id", auth.verifyToken, async (req, res, next) => {
-  if (req.user) {
-    console.log("abc");
-    let { id } = req.params;
-    try {
-      let user = await User.findById(id);
-      let cart = await Cart.find({ user: req.user.userId }).populate("variant");
-      let cartCount = cart.length;
-      let wishList = await WishList.find({ user }).populate("variant");
-      res.render("wishlist", {
-        name: user.firstname,
-        image: user.image,
-        cartCount,
-        id: user.id,
-        wishList,
-        wishListCount: wishList.length,
-      });
-    } catch (err) {
-      console.log("errr");
-      next(err);
+router.get(
+  "/wishlist/:id",
+  auth.adminRedirect,
+  auth.verifyToken,
+  async (req, res, next) => {
+    if (req.user) {
+      console.log("abc");
+      let { id } = req.params;
+      try {
+        let user = await User.findById(id);
+        let cart = await Cart.find({ user: req.user.userId }).populate(
+          "variant"
+        );
+        let cartCount = cart.length;
+        let wishList = await WishList.find({ user }).populate("variant");
+        res.render("wishlist", {
+          name: user.firstname,
+          image: user.image,
+          cartCount,
+          id: user.id,
+          wishList,
+          wishListCount: wishList.length,
+        });
+      } catch (err) {
+        console.log("errr");
+        next(err);
+      }
     }
   }
-});
+);
 
 // delete a product from wishlist
 router.get(
@@ -266,42 +292,41 @@ router.get(
 );
 
 // render user profile page
-router.get("/profile/:id", auth.verifyToken, async (req, res, next) => {
-  if (req.user) {
-    let { id } = req.params;
-    try {
-      let user = await User.findById(id);
-      if (!user) {
-        return res.render("page_not_found", {
-          admin_token: false,
-          user_token: true,
-          errors: null,
-        });
-      }
-      let cart = await Cart.find({ user: id }).populate("variant");
-      let cartCount = cart.length;
-      let wishList = await WishList.find({ user: id }).populate("variant");
+router.get(
+  "/profile/:id",
+  auth.adminRedirect,
+  auth.verifyToken,
+  async (req, res, next) => {
+    if (req.user) {
+      let { id } = req.params;
+      try {
+        let user = await User.findById(id);
+        let cart = await Cart.find({ user: id }).populate("variant");
+        let cartCount = cart.length;
+        let wishList = await WishList.find({ user: id }).populate("variant");
 
-      let addressArr = await Address.find({ user: id });
-      res.render("user_dashboard", {
-        name: user.firstname,
-        id,
-        image: user.image,
-        id,
-        wishListCount: wishList.length,
-        cartCount,
-        user,
-        addressArr,
-      });
-    } catch (err) {
-      next(err);
+        let addressArr = await Address.find({ user: id });
+        res.render("user_dashboard", {
+          name: user.firstname,
+          id,
+          image: user.image,
+          id,
+          wishListCount: wishList.length,
+          cartCount,
+          user,
+          addressArr,
+        });
+      } catch (err) {
+        next(err);
+      }
     }
   }
-});
+);
 
 // Display the customers all address added
 router.get(
   "/profile/viewAddress/:id",
+  auth.adminRedirect,
   auth.verifyToken,
   async (req, res, next) => {
     if (req.user) {
@@ -331,18 +356,23 @@ router.get(
   }
 );
 // render user profile edit page
-router.get("/profile/edit/:id", auth.verifyToken, async (req, res, next) => {
-  const { id } = req.params;
-  if (req.user) {
-    try {
-      let user = await User.findById(id);
-      res.render("edit_user_profile", { user, error: req.flash("error") });
-    } catch (err) {
-      console.log("errr");
-      next(err);
+router.get(
+  "/profile/edit/:id",
+  auth.adminRedirect,
+  auth.verifyToken,
+  async (req, res, next) => {
+    const { id } = req.params;
+    if (req.user) {
+      try {
+        let user = await User.findById(id);
+        res.render("edit_user_profile", { user, error: req.flash("error") });
+      } catch (err) {
+        console.log("errr");
+        next(err);
+      }
     }
   }
-});
+);
 
 //process user profile edit request
 router.post(
@@ -398,6 +428,7 @@ router.get(
 // render add address page
 router.get(
   "/profile/addAddress/:id",
+  auth.adminRedirect,
   auth.verifyToken,
   async (req, res, next) => {
     let id = req.user.userId;
@@ -454,6 +485,7 @@ router.post(
 // edit customer address
 router.get(
   "/profile/editAddress/:id",
+  auth.adminRedirect,
   auth.verifyToken,
   async (req, res, next) => {
     if (req.user) {
@@ -520,43 +552,52 @@ router.post(
   }
 );
 // render checkout page
-router.get("/checkout/:id", auth.verifyToken, async (req, res, next) => {
-  let { id } = req.params;
-  if (req.user) {
-    let userId = req.user.userId;
-    let fullName = req.user.fullName;
-    let image = req.user.image;
-    try {
-      let user = await User.findById(id);
-      let cart = await Cart.find({ user: req.user.userId }).populate("variant");
-      let cartCount = cart.length;
-      let wishList = await WishList.find({ user: userId }).populate("variant");
-      let address = await Address.find({ user: userId });
-      let totalAmount = cart.reduce((acc, curr) => {
-        acc += curr.price * curr.quantity;
-        return acc;
-      }, 0);
-      let tax = totalAmount * (18 / 100);
-      let grandTotal = totalAmount + tax;
-      res.render("checkout", {
-        name: fullName,
-        email: req.user.email,
-        id: userId,
-        image,
-        cartCount,
-        wishListCount: wishList.length,
-        address,
-        cart,
-        totalAmount,
-        tax: tax.toFixed(2),
-        grandTotal,
-        error: req.flash("error"),
-      });
-    } catch (err) {
-      next(err);
+router.get(
+  "/checkout/:id",
+  auth.adminRedirect,
+  auth.verifyToken,
+  async (req, res, next) => {
+    let { id } = req.params;
+    if (req.user) {
+      let userId = req.user.userId;
+      let fullName = req.user.fullName;
+      let image = req.user.image;
+      try {
+        let user = await User.findById(id);
+        let cart = await Cart.find({ user: req.user.userId }).populate(
+          "variant"
+        );
+        let cartCount = cart.length;
+        let wishList = await WishList.find({ user: userId }).populate(
+          "variant"
+        );
+        let address = await Address.find({ user: userId });
+        let totalAmount = cart.reduce((acc, curr) => {
+          acc += curr.price * curr.quantity;
+          return acc;
+        }, 0);
+        let tax = totalAmount * (18 / 100);
+        let grandTotal = totalAmount + tax;
+        res.render("checkout", {
+          name: fullName,
+          email: req.user.email,
+          id: userId,
+          image,
+          cartCount,
+          wishListCount: wishList.length,
+          address,
+          cart,
+          totalAmount,
+          tax: tax.toFixed(2),
+          grandTotal,
+          error: req.flash("error"),
+        });
+      } catch (err) {
+        next(err);
+      }
     }
   }
-});
+);
 
 router.get(
   "/checkout/selectAddress/:id",
@@ -647,41 +688,48 @@ router.get(
   }
 );
 
-router.get("/payment-page", auth.verifyToken, async (req, res, next) => {
-  if (req.user) {
-    let userId = req.user.userId;
-    try {
-      let user = await User.findById(req.user.userId);
-      let cart = await Cart.find({ user: req.user.userId }).populate("variant");
-      let cartCount = cart.length;
-      let wishList = await WishList.find({ user: req.user.userId }).populate(
-        "variant"
-      );
-      let address = await Address.findOne({ user: userId, isDefault: true });
-      let totalAmount = cart.reduce((acc, curr) => {
-        acc += curr.price * curr.quantity;
-        return acc;
-      }, 0);
-      let tax = totalAmount * (18 / 100);
-      let grandTotal = totalAmount + tax;
-      res.render("payment", {
-        name: user.firstname,
-        id: userId,
-        image: user.image,
-        cartCount,
-        wishListCount: wishList.length,
-        cart,
-        totalAmount,
-        tax,
-        email: user.email,
-        grandTotal,
-        address,
-      });
-    } catch (err) {
-      next(err);
+router.get(
+  "/payment-page",
+  auth.adminRedirect,
+  auth.verifyToken,
+  async (req, res, next) => {
+    if (req.user) {
+      let userId = req.user.userId;
+      try {
+        let user = await User.findById(req.user.userId);
+        let cart = await Cart.find({ user: req.user.userId }).populate(
+          "variant"
+        );
+        let cartCount = cart.length;
+        let wishList = await WishList.find({ user: req.user.userId }).populate(
+          "variant"
+        );
+        let address = await Address.findOne({ user: userId, isDefault: true });
+        let totalAmount = cart.reduce((acc, curr) => {
+          acc += curr.price * curr.quantity;
+          return acc;
+        }, 0);
+        let tax = totalAmount * (18 / 100);
+        let grandTotal = totalAmount + tax;
+        res.render("payment", {
+          name: user.firstname,
+          id: userId,
+          image: user.image,
+          cartCount,
+          wishListCount: wishList.length,
+          cart,
+          totalAmount,
+          tax,
+          email: user.email,
+          grandTotal,
+          address,
+        });
+      } catch (err) {
+        next(err);
+      }
     }
   }
-});
+);
 
 // place order
 router.post("/placeOrder", auth.verifyToken, async (req, res, next) => {
@@ -830,120 +878,142 @@ router.get("/payment-failure/:id", auth.verifyToken, async (req, res, next) => {
   }
 });
 
-router.get("/payment-success/:id", auth.verifyToken, async (req, res, next) => {
-  if (req.user) {
-    let userId = req.user.userId;
-    let orderId = req.params.id;
+router.get(
+  "/payment-success/:id",
+  auth.adminRedirect,
+  auth.verifyToken,
+  async (req, res, next) => {
+    if (req.user) {
+      let userId = req.user.userId;
+      let orderId = req.params.id;
 
-    try {
-      let user = await User.findById(req.user.userId);
-      let cart = await Cart.find({ user: req.user.userId }).populate("variant");
-      let cartCount = cart.length;
-      let wishList = await WishList.find({ user: userId }).populate("variant");
-      let address = await Address.find({ user: userId });
-      let order = await Order.findById(orderId);
-      res.render("success", {
-        name: user.firstname,
-        id: req.user.userId,
-        image: user.image,
-        cartCount,
-        wishListCount: wishList.length,
-        order,
-      });
-    } catch (err) {
-      next(err);
+      try {
+        let user = await User.findById(req.user.userId);
+        let cart = await Cart.find({ user: req.user.userId }).populate(
+          "variant"
+        );
+        let cartCount = cart.length;
+        let wishList = await WishList.find({ user: userId }).populate(
+          "variant"
+        );
+        let address = await Address.find({ user: userId });
+        let order = await Order.findById(orderId);
+        res.render("success", {
+          name: user.firstname,
+          id: req.user.userId,
+          image: user.image,
+          cartCount,
+          wishListCount: wishList.length,
+          order,
+        });
+      } catch (err) {
+        next(err);
+      }
     }
   }
-});
+);
 
 // A particular user's order list
-router.get("/orders/:id", auth.verifyToken, async (req, res, next) => {
-  let { id } = req.params;
-  console.log(id, "id");
-  if (req.user) {
-    let userId = req.user.userId;
+router.get(
+  "/orders/:id",
+  auth.adminRedirect,
+  auth.verifyToken,
+  async (req, res, next) => {
+    let { id } = req.params;
+    if (req.user) {
+      let userId = req.user.userId;
 
-    try {
-      let user = await User.findById(id);
-      if (!user) {
-        return res.render("page_not_found", {
-          admin_token: false,
-          user_token: true,
-          errors: null,
+      try {
+        let user = await User.findById(id);
+        if (!user) {
+          return res.render("page_not_found", {
+            admin_token: false,
+            user_token: true,
+            errors: null,
+          });
+          s;
+        }
+        let cart = await Cart.find({ user: req.user.userId }).populate(
+          "variant"
+        );
+        let cartCount = cart.length;
+        let wishList = await WishList.find({ user: userId }).populate(
+          "variant"
+        );
+        let orders = await Order.find({ user: req.user.userId })
+          .populate([
+            { path: "orderItems.variant" },
+            { path: "orderItems.product" },
+          ])
+          .sort({ createdAt: -1 });
+        res.render("user_orders", {
+          name: user.firstname,
+          id: req.user.userId,
+          image: user.image,
+          cartCount,
+          orders,
+          wishListCount: wishList.length,
         });
-        s;
+      } catch (err) {
+        next(err);
       }
-      let cart = await Cart.find({ user: req.user.userId }).populate("variant");
-      let cartCount = cart.length;
-      let wishList = await WishList.find({ user: userId }).populate("variant");
-      let orders = await Order.find({ user: req.user.userId })
-        .populate([
+    }
+  }
+);
+
+router.get(
+  "/order-details/:id",
+  auth.adminRedirect,
+  auth.verifyToken,
+  async (req, res, next) => {
+    console.log("abc");
+    if (req.user) {
+      let { id } = req.params;
+      let objectId = id;
+      let { orderId, prodId } = req.query;
+      try {
+        let user = await User.findById(req.user.userId);
+        let cart = await Cart.find({ user: req.user.userId }).populate(
+          "variant"
+        );
+        let cartCount = cart.length;
+        let wishList = await WishList.find({ user: req.user.userId }).populate(
+          "variant"
+        );
+        let order = await Order.findById({ _id: orderId }).populate([
           { path: "orderItems.variant" },
           { path: "orderItems.product" },
-        ])
-        .sort({ createdAt: -1 });
-      res.render("user_orders", {
-        name: user.firstname,
-        id: req.user.userId,
-        image: user.image,
-        cartCount,
-        orders,
-        wishListCount: wishList.length,
-      });
-    } catch (err) {
-      next(err);
-    }
-  }
-});
+        ]);
 
-router.get("/order-details/:id", auth.verifyToken, async (req, res, next) => {
-  console.log("abc");
-  if (req.user) {
-    let { id } = req.params;
-    let objectId = id;
-    let { orderId, prodId } = req.query;
-    console.log(req.query);
-    console.log();
-    try {
-      let user = await User.findById(req.user.userId);
-      let cart = await Cart.find({ user: req.user.userId }).populate("variant");
-      let cartCount = cart.length;
-      let wishList = await WishList.find({ user: req.user.userId }).populate(
-        "variant"
-      );
-      let order = await Order.findById({ _id: orderId }).populate([
-        { path: "orderItems.variant" },
-        { path: "orderItems.product" },
-      ]);
-      console.log(order.orderItems[0].variant, "order");
-      let orderDetail = {};
-      order.orderItems.forEach((od, i) => {
-        if (String(objectId) === String(od.id)) {
-          orderDetail.name = od.variant.name;
-          orderDetail.price = od.product.price;
-          orderDetail.quantity = od.quantity;
-          orderDetail.size = od.size;
-          orderDetail.paymentMode = order.paymentMode;
-          orderDetail.image = od.variant.images[0].img;
-          orderDetail.purchaseDate = order.createdAt.toDateString();
-          orderDetail.shippingAddress = order.shippingInfo;
-          orderDetail.orderStatus = od.orderStatus;
-        }
-      });
-      console.log(orderDetail, "orderdetail");
-      res.render("order_details", {
-        name: user.firstname,
-        id: req.user.userId,
-        image: user.image,
-        cartCount,
-        orderDetail,
-        wishListCount: wishList.length,
-      });
-    } catch (err) {
-      next(err);
+        let orderDetail = {};
+        order.orderItems.forEach((od, i) => {
+          if (String(objectId) === String(od.id)) {
+            orderDetail.name = od.variant.name;
+            orderDetail.price = od.product.price;
+            orderDetail.quantity = od.quantity;
+            orderDetail.size = od.size;
+            orderDetail.paymentMode = order.paymentMode;
+            orderDetail.image = od.variant.images[0].img;
+            orderDetail.purchaseDate = order.createdAt.toDateString();
+            orderDetail.shippingAddress = order.shippingInfo;
+            orderDetail.orderStatus = od.orderStatus;
+          }
+        });
+        console.log(orderDetail, "orderdetail");
+        res.render("order_details", {
+          name: user.firstname,
+          id: req.user.userId,
+          image: user.image,
+          cartCount,
+          orderDetail,
+          wishListCount: wishList.length,
+        });
+      } catch (err) {
+        next(err);
+      }
     }
   }
-});
+);
 
 // cancel order
 router.get("/orders/cancel/:id", auth.verifyToken, async (req, res, next) => {
