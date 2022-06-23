@@ -30,9 +30,7 @@ module.exports = {
         req.user = payload;
         return next();
       } else {
-        if (!admin_token) {
-          next();
-        }
+        next();
       }
     } catch (err) {
       next(err);
@@ -59,6 +57,12 @@ module.exports = {
   adminIsLoggedIn: (req, res, next) => {
     const { admin_token } = req.cookies;
     if (!admin_token) {
+      next();
+    }
+  },
+  userIsLoggedIn: (req, res, next) => {
+    const { user_token } = req.cookies;
+    if (!user_token) {
       next();
     }
   },

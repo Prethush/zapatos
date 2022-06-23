@@ -47,7 +47,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   let errors = err;
   let { admin_token, user_token } = req.cookies;
-  res.render("page_not_found", { admin_token, user_token, errors });
+  return res.render("error", { admin_token, user_token, errors });
 });
 
 module.exports = app;

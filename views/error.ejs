@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Error</title>
+  </head>
+  <body
+    style="
+      height: 98vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #0077b6;
+    "
+  >
+    <h1 style="color: #fff; text-align: center"><%= errors %></h1>
+    <div>
+      <%if(admin_token){%>
+      <a
+        href="/admin/home"
+        class="btn btn-primar"
+        style="
+          background-color: white;
+          padding: 0.5rem 0.6rem;
+          border-radius: 0.3rem;
+          text-decoration: none;
+          font-size: 1.3rem;
+        "
+        >Go to Home</a
+      >
+      <%}else{%>
+      <a
+        href="/"
+        class="btn btn-primary"
+        style="
+          background-color: white;
+          padding: 0.5rem 0.6rem;
+          border-radius: 0.3rem;
+          text-decoration: none;
+          font-size: 1.3rem;
+        "
+        >Go to Home</a
+      >
+      <%}%>
+    </div>
+  </body>
+</html>

@@ -227,13 +227,6 @@ router.get("/wishlist/:id", auth.verifyToken, async (req, res, next) => {
     let { id } = req.params;
     try {
       let user = await User.findById(id);
-      if (!user) {
-        return res.render("page_not_found", {
-          admin_token: false,
-          user_token: true,
-          errors: null,
-        });
-      }
       let cart = await Cart.find({ user: req.user.userId }).populate("variant");
       let cartCount = cart.length;
       let wishList = await WishList.find({ user }).populate("variant");
@@ -246,6 +239,7 @@ router.get("/wishlist/:id", auth.verifyToken, async (req, res, next) => {
         wishListCount: wishList.length,
       });
     } catch (err) {
+      console.log("errr");
       next(err);
     }
   }
@@ -340,10 +334,11 @@ router.get(
 router.get("/profile/edit/:id", auth.verifyToken, async (req, res, next) => {
   const { id } = req.params;
   if (req.user) {
-    let user = await User.findById(id);
-    res.render("edit_user_profile", { user, error: req.flash("error") });
     try {
+      let user = await User.findById(id);
+      res.render("edit_user_profile", { user, error: req.flash("error") });
     } catch (err) {
+      console.log("errr");
       next(err);
     }
   }
@@ -355,7 +350,6 @@ router.post(
   auth.verifyToken,
   upload.single("image"),
   async (req, res, next) => {
-    console.log(req.file);
     const { id } = req.params;
     let { firstname, lastname, email } = req.body;
     try {

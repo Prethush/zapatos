@@ -12,10 +12,7 @@ const MainCategory = require("../models/MainCategory");
 const WishList = require("../models/WishList");
 
 router.get("/", auth.authOptional, async (req, res, next) => {
-  res.header(
-    "Cache-control",
-    "no-cache,private, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0"
-  );
+  console.log("abc");
   let fullName = null;
   let image = null;
   let id = req.user ? req.user.userId : null;
