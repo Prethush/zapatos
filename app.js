@@ -9,12 +9,10 @@ const session = require("express-session");
 const dotenv = require("dotenv");
 const indexRouter = require("./routes/index");
 const cookieParser = require("cookie-parser");
-const nocache = require("nocache");
 
 dotenv.config({ path: "config/config.env" });
 
 // middlewares
-app.use(nocache());
 app.use(cookieParser());
 app.use(logger("dev"));
 app.use(express.json());
